@@ -1,5 +1,6 @@
 import 'dart:io';
 
+/// Interface for parsing configurations from a Config file
 abstract class AbstractConfigParser {
   final String configPath;
 
@@ -10,8 +11,10 @@ abstract class AbstractConfigParser {
   }
 
   static String _replaceEnvironmentVariables(String config) {
-    var valueFromEnvironmentKey = (String key) => String.fromEnvironment(key, defaultValue: key);
-    return config.replaceAllMapped(r'^%env\(([a-zA-Z]+)\)%$', (match) => valueFromEnvironmentKey(match.group(1)));
+    var valueFromEnvironmentKey =
+        (String key) => String.fromEnvironment(key, defaultValue: key);
+    return config.replaceAllMapped(r'^%env\(([a-zA-Z]+)\)%$',
+        (match) => valueFromEnvironmentKey(match.group(1)));
   }
 
   Map<String, dynamic> parse();

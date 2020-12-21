@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:taida/core/parse/AbstractConfigParser.dart';
 import 'package:yaml/yaml.dart';
 
+/// parser for config yamls
 class YamlConfigParser extends AbstractConfigParser {
   YamlConfigParser(String configPath) : super(configPath);
 

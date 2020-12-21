@@ -15,8 +15,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.41.1"
+  ansicolor:
+    dependency: "direct main"
+    description:
+      name: ansicolor
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1"
   args:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: args
       url: "https://pub.dartlang.org"
@@ -149,7 +156,7 @@ packages:
     source: hosted
     version: "0.12.9"
   meta:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: meta
       url: "https://pub.dartlang.org"
@@ -352,7 +359,7 @@ packages:
     source: hosted
     version: "0.7.4"
   yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: yaml
       url: "https://pub.dartlang.org"

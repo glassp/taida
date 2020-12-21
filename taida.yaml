@@ -1,0 +1,30 @@
+taida:
+  output_dir: public #default to build
+  #log_file: log/output.log # default '' => no file logging
+  # must not contain a leading / and must be relative to this file
+  progress: true #default false [log@v0.3]
+  modules: #[core@v0.1]
+    - copy
+    - clean
+    - minify
+    - preload
+    - template
+    - scss
+    - typescript
+    - dart
+    - manifest
+    - sitemap
+  module_config:
+    copy:
+      - from: [assets/]
+        to: public/assets
+      - from: 
+          - copy
+          - res
+        to: public/assets/res
+    scss:
+      - entry: assets/scss/app.scss
+        output: public/assets/app
+    clean:
+      - $working-dir
+      - $output-root

@@ -5,5 +5,8 @@
 # Conventional directory for build outputs
 build/
 
+# Working dir for tool
+taida/workDir/
+
 # Directory created by dartdoc
 doc/api/

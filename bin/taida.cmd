@@ -1,1 +1,1 @@
-::TODO see taida.sh
+dart taida.dart %*
