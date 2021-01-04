@@ -16,7 +16,7 @@ import 'package:taida/core/parse/YamlConfigParser.dart';
 @sealed
 abstract class ConfigurationLoader {
   static Configuration _instance;
-  static Map<String, dynamic> _cliOptions = {};
+  static Map<String, dynamic> _cliOptions;
   static String _projectRoot;
   static final String _workingDirectory = '/taida/workDir';
   static final List<String> possibleConfigFiles = <String>[
@@ -44,9 +44,11 @@ abstract class ConfigurationLoader {
 
     var parser = _getParserForFileType(path);
     var configMap = parser.parse();
-    configMap['taida']['project_root'] = _projectRoot;
+    configMap =configMap['taida'];
+    _cliOptions['taida']['project_root'] = _projectRoot;
+
     for (var key in configMap.keys) {
-      _cliOptions.putIfAbsent(key, () => configMap[key]);
+      _cliOptions['taida'].putIfAbsent(key, () => configMap[key]);
     }
     var configuration = Configuration.fromMap(_cliOptions);
     _instance = configuration;

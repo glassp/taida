@@ -7,7 +7,7 @@ class _Configuration {
       throw InvalidConfigurationFormatException(
           'Configuration is not formated properly. Missing global "taida" key.');
     }
-
+   
     map = map['taida'];
     return Configuration(
         outputDirectory: map['output_dir'],
@@ -27,7 +27,7 @@ class _Configuration {
       'project_root': '"${config.projectRoot}"',
       'verbose': config.verbose,
       'watch': config.watch,
-      'log_file': '"${config.logFile}"',
+      'log_file': '"${config.logFile ?? ''}"',
       '\$logToFile': config.logToFile,
       'modules': config.modules.toString(),
       'module_config': {

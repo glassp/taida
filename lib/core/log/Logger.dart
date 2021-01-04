@@ -23,21 +23,23 @@ class Logger {
   }
 
   static void log(LogLabel label, String message) {
-    var time = '[${DateTime.now().toIso8601String()}] ';
+    var time = '[${DateTime.now().toIso8601String().padRight(26, ' ')}] ';
     _write(time + label.toString() + message);
   }
 
   static void debug(String message) {
     if (ConfigurationLoader.isLoaded() &&
-        (ConfigurationLoader.load()?.debug ?? false)) {
+        ConfigurationLoader.load().debug) {
       log(LogLabel.debug, message);
     }
   }
-
+  static void emptyLines([int lines = 0]) {
+    print('\n'*lines);
+  }
   static void error(String message) => log(LogLabel.error, message);
   static void warn(String message) => log(LogLabel.warning, message);
   static void verbose(String message) {
-    if (ConfigurationLoader.load()?.verbose ?? false) {
+    if (ConfigurationLoader.isLoaded() && ConfigurationLoader.load().verbose) {
       log(LogLabel.verbose, message);
     }
   }

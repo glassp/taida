@@ -5,7 +5,6 @@ taida:
   progress: true #default false [log@v0.3]
   modules: #[core@v0.1]
     - copy
-    - clean
     - minify
     - preload
     - template
@@ -25,6 +24,3 @@ taida:
     scss:
       - entry: assets/scss/app.scss
         output: public/assets/app
-    clean:
-      - $working-dir
-      - $output-root

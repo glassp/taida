@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:meta/meta.dart';
 import 'package:taida/Exception/Module/NoRunnableModule.dart';
 import 'package:taida/modules/Module.dart';
@@ -23,12 +25,12 @@ abstract class BaseCommand extends Command {
   /// Parses the options passed to the CLI  and returns it as a key value map, where the keys SHOULD be snake_case.
   @protected
   Map<String, dynamic> prepareConfigurationFromCli() {
-    var map = <String, dynamic>{};
+    var map = <String, dynamic>{
+      'taida': <String, dynamic>{}
+    };
 
     for (var option in argResults.options) {
-      if (argResults.wasParsed(option)) {
-        map.putIfAbsent(option, () => argResults[option]);
-      }
+      map['taida'].putIfAbsent(option, () => argResults[option]);
     }
 
     return map;
@@ -52,7 +54,6 @@ abstract class BaseCommand extends Command {
           Logger.verbose('module finished running');
           queue.remove(module);
         }
-        print('');
       }
       if (shadow.toString() == queue.toString()) {
         // no modification happend in the loop => infinite loop would occur
@@ -78,16 +79,20 @@ abstract class BaseCommand extends Command {
 
   @override
   @nonVirtual
-
-  /// Runs the command.
-  /// This will read the configuration and execute each module with this config.
   void run() async {
     Logger.verbose('Reading configuration from terminal command.');
-    var config = prepareConfigurationFromCli();
-    ConfigurationLoader.cliOptions = config;
+    var cliConfig = prepareConfigurationFromCli();
+    ConfigurationLoader.cliOptions = cliConfig;
     Logger.verbose('Reading configuration from configuration file.');
-    ConfigurationLoader.load();
-    print('');
+    var config = ConfigurationLoader.load();
+    Logger.emptyLines();
+    Logger.verbose('Removing old output');
+
+    var outputDir = Directory('${config.projectRoot}/${config.outputDirectory}');
+    if(outputDir.existsSync()) outputDir.deleteSync(recursive: true);
+
     await _execute();
+    Logger.verbose('Removing temporary files');
+    Directory('${config.projectRoot}/taida/workDir').deleteSync(recursive: true);
   }
 }
