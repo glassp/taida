@@ -10,6 +10,7 @@ dependencies:
   args: ^1.6.0
   ansicolor: ^1.1.1
   meta: ^1.2.4
+  sass: ^1.32.0
   yaml: ^2.2.1
 
 dev_dependencies:

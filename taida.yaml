@@ -15,12 +15,10 @@ taida:
     - sitemap
   module_config:
     copy:
-      - from: [assets/]
-        to: public/assets
       - from: 
           - copy
           - res
         to: public/assets/res
     scss:
-      - entry: assets/scss/app.scss
-        output: public/assets/app
+      - entry: assets/scss/app.scss #relative path to file from this file
+        output: public/assets/app.css #relative path to file from this file
