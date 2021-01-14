@@ -8,6 +8,9 @@ build/
 # Working dir for tool
 taida/workDir/
 
+# File Used to determine if npm dependencies are up-to-date
+installVersion.txt
+
 # Directory created by dartdoc
 doc/api/
 

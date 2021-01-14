@@ -5,7 +5,6 @@ import 'package:taida/core/log/LogLabel.dart';
 
 /// Basic logger that prints data to the console or logFile.
 class Logger {
-
   /// writes the `message` to the given output location.
   static void _write(String message) {
     if (!ConfigurationLoader.isLoaded()) {
@@ -37,10 +36,10 @@ class Logger {
     }
   }
 
-  /// logs the given number of lines. 
+  /// logs the given number of lines.
   /// if `lines` is smaller that 1 it will inly print the line once.
   static void emptyLines([int lines = 0]) {
-    if(lines < 0) lines = 0;
+    if (lines < 0) lines = 0;
     print('\n' * lines.abs());
   }
 

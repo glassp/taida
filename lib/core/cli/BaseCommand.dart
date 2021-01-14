@@ -11,6 +11,7 @@ import 'package:taida/modules/ModuleLoader.dart';
 import 'package:args/command_runner.dart';
 import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:taida/core/log/Logger.dart';
+import 'package:yaml/yaml.dart';
 
 /// Abstraction for the Commands that can be invoked for the taida command.
 abstract class BaseCommand extends Command {
@@ -49,11 +50,25 @@ abstract class BaseCommand extends Command {
       throw EnvironmentError(
           'NodeJS/ npm must be in your path to use this tool.');
     }
-    if (await Directory(TAIDA_LIBRARY_ROOT + '/node_modules').exists()) return;
+
+    var nodeModulesDir = Directory(TAIDA_LIBRARY_ROOT + '/node_modules');
+    if (await _isOutdated()) {
+      await nodeModulesDir.delete(recursive: true);
+    }
+    if (await nodeModulesDir.exists()) return;
 
     Logger.verbose(
         'Installing node dependencies to ${TAIDA_LIBRARY_ROOT}/node_modules');
     await Process.run('npm', ['install'], workingDirectory: TAIDA_LIBRARY_ROOT);
+    await (await File(TAIDA_LIBRARY_ROOT + '/installVersion.txt').create()).writeAsString(TAIDA_LIBRARY_VERSION);
+  }
+
+  Future<bool> _isOutdated() async {
+    var installVersionFile = File(TAIDA_LIBRARY_ROOT + '/installVersion.txt');
+    if (!await installVersionFile.exists()) return true;
+    var installVersion = await installVersionFile.readAsString();
+    print(installVersion + ' ' + TAIDA_LIBRARY_VERSION.toString());
+    return installVersion != TAIDA_LIBRARY_VERSION;
   }
 
   /// Executes the command action on all Modules in the module queue

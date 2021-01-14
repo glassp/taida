@@ -32,7 +32,7 @@ abstract class ConfigurationLoader {
 
   /// returns a [Configuration] either from the cache or a newly created instance,
   static Configuration load() => _instance ?? _createConfiguration();
-  
+
   /// checks if a [Configuration] exists in the cache
   static bool isLoaded() => null != _instance;
 
