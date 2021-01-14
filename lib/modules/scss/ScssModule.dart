@@ -60,10 +60,12 @@ class ScssModule extends Module {
       }
 
       var css = sass.compile(task['entry']);
-      var cacheBusterSuffix = config.enableCacheBuster ? '-${config.buildHash}' : '';
+      var cacheBusterSuffix =
+          config.enableCacheBuster ? '-${config.buildHash}' : '';
       var filename = task['output'].replaceAll(RegExp(r'.css$'), '');
-      var outputFile = File('${config.projectRoot}/${filename}${cacheBusterSuffix}.css');
-      
+      var outputFile =
+          File('${config.projectRoot}/${filename}${cacheBusterSuffix}.css');
+
       if (!await outputFile.exists()) {
         Logger.verbose('Creating File ${outputFile.path}');
         await outputFile.create(recursive: true);

@@ -53,7 +53,10 @@ abstract class ConfigurationLoader {
     var configMap = parser.parse();
     configMap = configMap['taida'];
     _cliOptions['taida']['project_root'] = _projectRoot;
-    _cliOptions['taida']['build_hash'] = sha256.convert(utf8.encode(DateTime.now().toIso8601String())).toString().substring(0,8);
+    _cliOptions['taida']['build_hash'] = sha256
+        .convert(utf8.encode(DateTime.now().toIso8601String()))
+        .toString()
+        .substring(0, 8);
 
     for (var key in configMap.keys) {
       _cliOptions['taida'].putIfAbsent(key, () => configMap[key]);

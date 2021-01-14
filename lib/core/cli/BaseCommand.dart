@@ -59,7 +59,8 @@ abstract class BaseCommand extends Command {
     Logger.verbose(
         'Installing node dependencies to ${TAIDA_LIBRARY_ROOT}/node_modules');
     await Process.run('npm', ['install'], workingDirectory: TAIDA_LIBRARY_ROOT);
-    await (await File(TAIDA_LIBRARY_ROOT + '/installVersion.txt').create()).writeAsString(TAIDA_LIBRARY_VERSION);
+    await (await File(TAIDA_LIBRARY_ROOT + '/installVersion.txt').create())
+        .writeAsString(TAIDA_LIBRARY_VERSION);
   }
 
   Future<bool> _isOutdated() async {
