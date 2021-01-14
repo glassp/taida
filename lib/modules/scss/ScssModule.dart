@@ -62,7 +62,7 @@ class ScssModule extends Module {
       var css = sass.compile(task['entry']);
       var cacheBusterSuffix =
           config.enableCacheBuster ? '-${config.buildHash}' : '';
-      var filename = task['output'].replaceAll(RegExp(r'.css$'), '');
+      var filename = task['output'].replaceAll(RegExp(r'\.css$'), '');
       var outputFile =
           File('${config.projectRoot}/${filename}${cacheBusterSuffix}.css');
 
