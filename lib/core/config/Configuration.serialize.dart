@@ -15,7 +15,9 @@ class _Configuration {
         projectRoot: map['project_root'],
         verbose: map['verbose'],
         watch: map['watch'],
+        enableCacheBuster: map['enable_cache_buster'] ?? false,
         logFile: map['log_file'],
+        buildHash: map['build_hash'],
         modules: map['modules'],
         moduleConfiguration: map['module_config']);
   }
@@ -27,8 +29,10 @@ class _Configuration {
       'project_root': '"${config.projectRoot}"',
       'verbose': config.verbose,
       'watch': config.watch,
+      'enable_cache_buster': config.enableCacheBuster,
       'log_file': '"${config.logFile ?? ''}"',
       '\$logToFile': config.logToFile,
+      'build_hash': '"${config.buildHash}"',
       'modules': config.modules.toString(),
       'module_config': {
         for (var key in config.moduleConfiguration.keys)

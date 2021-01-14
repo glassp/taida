@@ -58,8 +58,12 @@ class ScssModule extends Module {
         Logger.warn('${source.path} does not exist. Skipping...');
         continue;
       }
+
       var css = sass.compile(task['entry']);
-      var outputFile = File('${config.projectRoot}/${task['output']}');
+      var cacheBusterSuffix = config.enableCacheBuster ? '-${config.buildHash}' : '';
+      var filename = task['output'].replaceAll(RegExp(r'.css$'), '');
+      var outputFile = File('${config.projectRoot}/${filename}${cacheBusterSuffix}.css');
+      
       if (!await outputFile.exists()) {
         Logger.verbose('Creating File ${outputFile.path}');
         await outputFile.create(recursive: true);
@@ -85,7 +89,7 @@ class ScssModule extends Module {
           '--config',
           '${stylelintConfig}',
           '--output-file',
-          '${config.projectRoot}/taida/analyze/stylelint-report-HASH.txt',
+          '${config.projectRoot}/taida/analyze/stylelint-report-${config.buildHash}.txt',
           '${config.projectRoot}/assets/**/*.scss'
         ],
         workingDirectory: TAIDA_LIBRARY_ROOT);
@@ -98,7 +102,7 @@ class ScssModule extends Module {
         throw FailureException(await process.stderr.toString());
       case 2:
         Logger.log(logLabel,
-            'Some stylelint rules failed. See report at ${config.projectRoot}/taida/analyze/stylelint-report-HASH.txt');
+            'Some stylelint rules failed. See report at ${config.projectRoot}/taida/analyze/stylelint-report-${config.buildHash}.txt');
         return;
       case 78:
         Logger.log(

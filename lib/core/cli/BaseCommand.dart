@@ -11,7 +11,6 @@ import 'package:taida/modules/ModuleLoader.dart';
 import 'package:args/command_runner.dart';
 import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:taida/core/log/Logger.dart';
-import 'package:yaml/yaml.dart';
 
 /// Abstraction for the Commands that can be invoked for the taida command.
 abstract class BaseCommand extends Command {
@@ -67,7 +66,6 @@ abstract class BaseCommand extends Command {
     var installVersionFile = File(TAIDA_LIBRARY_ROOT + '/installVersion.txt');
     if (!await installVersionFile.exists()) return true;
     var installVersion = await installVersionFile.readAsString();
-    print(installVersion + ' ' + TAIDA_LIBRARY_VERSION.toString());
     return installVersion != TAIDA_LIBRARY_VERSION;
   }
 
@@ -120,6 +118,11 @@ abstract class BaseCommand extends Command {
     var cliConfig = prepareConfigurationFromCli();
     ConfigurationLoader.cliOptions = cliConfig;
     var config = ConfigurationLoader.load();
+
+    var buildFile = File('${config.projectRoot}/taida/build.hash');
+    if (!await buildFile.exists()) await buildFile.create();
+    await buildFile.writeAsString(config.buildHash);
+
     Logger.emptyLines();
     Logger.verbose('Removing old output');
 

@@ -9,6 +9,7 @@ environment:
 dependencies:
   args: ^1.6.0
   ansicolor: ^1.1.1
+  crypto: ^2.1.5
   meta: ^1.2.4
   sass: ^1.32.0
   yaml: ^2.2.1

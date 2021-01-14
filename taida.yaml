@@ -3,6 +3,7 @@ taida:
   #log_file: log/output.log # default '' => no file logging
   # must not contain a leading / and must be relative to this file
   progress: true #default false [log@v0.3]
+  enable_cache_buster: true #default false
   modules: #[core@v0.1]
     - copy
     - minify

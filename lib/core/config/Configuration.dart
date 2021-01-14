@@ -9,7 +9,9 @@ class Configuration {
   final bool debug;
   final bool watch;
   final bool verbose;
+  final bool enableCacheBuster;
   final String logFile;
+  final String buildHash;
   final List<dynamic> modules;
   final Map<String, dynamic> moduleConfiguration;
 
@@ -19,7 +21,9 @@ class Configuration {
       this.projectRoot = '',
       this.verbose = false,
       this.watch = false,
+      this.enableCacheBuster = false,
       this.logFile = '',
+      this.buildHash = '',
       this.modules = const [],
       this.moduleConfiguration = const {}});
   factory Configuration.fromMap(Map<String, dynamic> config) =>
