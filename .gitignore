@@ -10,3 +10,6 @@ taida/workDir/
 
 # Directory created by dartdoc
 doc/api/
+
+# Directory created by npm dependencies
+node_modules

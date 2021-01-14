@@ -1,7 +1,11 @@
 import 'dart:io';
 
 import 'package:meta/meta.dart';
+import 'package:taida/Error/EnvironmentError.dart';
 import 'package:taida/Exception/Module/NoRunnableModule.dart';
+import 'package:taida/_taida.dart';
+import 'package:taida/core/config/Configuration.dart';
+import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/modules/Module.dart';
 import 'package:taida/modules/ModuleLoader.dart';
 import 'package:args/command_runner.dart';
@@ -25,9 +29,7 @@ abstract class BaseCommand extends Command {
   /// Parses the options passed to the CLI  and returns it as a key value map, where the keys SHOULD be snake_case.
   @protected
   Map<String, dynamic> prepareConfigurationFromCli() {
-    var map = <String, dynamic>{
-      'taida': <String, dynamic>{}
-    };
+    var map = <String, dynamic>{'taida': <String, dynamic>{}};
 
     for (var option in argResults.options) {
       map['taida'].putIfAbsent(option, () => argResults[option]);
@@ -36,12 +38,31 @@ abstract class BaseCommand extends Command {
     return map;
   }
 
+  /// checks if the node_modules dir exists and if not it will run npm install
+  /// Throws [EnvironmentError] if node/npm is not installed.
+  void _install(Configuration config) async {
+    var process = await Process.start('node', ['-v']);
+    var nodeInstalled = (await process.exitCode) == 0;
+    await process.kill();
+
+    if (!nodeInstalled) {
+      throw EnvironmentError(
+          'NodeJS/ npm must be in your path to use this tool.');
+    }
+    if (await Directory(TAIDA_LIBRARY_ROOT + '/node_modules').exists()) return;
+
+    Logger.verbose(
+        'Installing node dependencies to ${TAIDA_LIBRARY_ROOT}/node_modules');
+    await Process.run('npm', ['install'], workingDirectory: TAIDA_LIBRARY_ROOT);
+  }
+
   /// Executes the command action on all Modules in the module queue
   void _execute() async {
     var queue = _createModuleQueue();
     while (queue?.isNotEmpty ?? false) {
-      final shadow = List.from(queue);
+      final shadow = List<Module>.from(queue);
       for (var module in shadow) {
+        Logger.emptyLines();
         Logger.verbose('Try running Module $module...');
         // check if module has can execute at all for action.
         if (!module.canHandleCommand(name)) {
@@ -80,19 +101,20 @@ abstract class BaseCommand extends Command {
   @override
   @nonVirtual
   void run() async {
-    Logger.verbose('Reading configuration from terminal command.');
+    Logger.log(LogLabel.config, 'Reading configuration from terminal command.');
     var cliConfig = prepareConfigurationFromCli();
     ConfigurationLoader.cliOptions = cliConfig;
-    Logger.verbose('Reading configuration from configuration file.');
     var config = ConfigurationLoader.load();
     Logger.emptyLines();
     Logger.verbose('Removing old output');
 
-    var outputDir = Directory('${config.projectRoot}/${config.outputDirectory}');
-    if(outputDir.existsSync()) outputDir.deleteSync(recursive: true);
-
+    var outputDir =
+        Directory('${config.projectRoot}/${config.outputDirectory}');
+    if (outputDir.existsSync()) outputDir.deleteSync(recursive: true);
+    await _install(config);
     await _execute();
     Logger.verbose('Removing temporary files');
-    Directory('${config.projectRoot}/taida/workDir').deleteSync(recursive: true);
+    Directory('${config.projectRoot}/taida/workDir')
+        .deleteSync(recursive: true);
   }
 }

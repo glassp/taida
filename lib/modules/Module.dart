@@ -10,6 +10,9 @@ abstract class Module {
   /// This is used to identify and compare [Module]s
   String get name;
 
+  /// This is used by the module command to display a list of [Modules] and their description
+  String get description;
+
   /// This is used to check if a [Module] can run its code at this point in time or not.
   /// The queue of pending modules is passed to `queue`
   /// The executed command is passed to `command`.
@@ -17,6 +20,7 @@ abstract class Module {
     List<Module> queue,
   );
 
+  /// checks if the [Module] can handle the given `command`
   bool canHandleCommand(String command);
 
   /// Executes the Tasks for this [Module].

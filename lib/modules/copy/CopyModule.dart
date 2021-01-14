@@ -62,4 +62,7 @@ class CopyModule extends Module {
 
   @override
   bool canHandleCommand(String command) => 'build' == command;
+
+  @override
+  String get description => 'Copies static assets to the output directory';
 }

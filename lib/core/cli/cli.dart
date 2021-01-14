@@ -2,6 +2,7 @@ import 'package:args/command_runner.dart';
 import 'package:taida/core/cli/commands/AnalyzeCommand.dart';
 import 'package:taida/core/cli/commands/BuildCommand.dart';
 import 'package:taida/core/cli/commands/FixCommand.dart';
+import 'package:taida/core/cli/commands/ModuleCommand.dart';
 import 'package:taida/core/cli/commands/TestCommand.dart';
 
 /// Main command that registers all commands and
@@ -10,5 +11,6 @@ CommandRunner runApp() {
     ..addCommand(AnalyzeCommand())
     ..addCommand(BuildCommand())
     ..addCommand(FixCommand())
-    ..addCommand(TestCommand());
+    ..addCommand(TestCommand())
+    ..addCommand(ModuleCommand());
 }

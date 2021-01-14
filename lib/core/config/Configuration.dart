@@ -15,10 +15,10 @@ class Configuration {
 
   Configuration(
       {this.outputDirectory = 'build',
-      this.debug,
-      this.projectRoot,
-      this.verbose,
-      this.watch,
+      this.debug = false,
+      this.projectRoot = '',
+      this.verbose = false,
+      this.watch = false,
       this.logFile = '',
       this.modules = const [],
       this.moduleConfiguration = const {}});

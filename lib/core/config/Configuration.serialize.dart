@@ -7,7 +7,7 @@ class _Configuration {
       throw InvalidConfigurationFormatException(
           'Configuration is not formated properly. Missing global "taida" key.');
     }
-   
+
     map = map['taida'];
     return Configuration(
         outputDirectory: map['output_dir'],

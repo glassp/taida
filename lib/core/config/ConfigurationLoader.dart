@@ -25,13 +25,18 @@ abstract class ConfigurationLoader {
     'taida.json'
   ];
 
+  @internal
   static set cliOptions(options) {
     _cliOptions ??= options;
   }
 
+  /// returns a [Configuration] either from the cache or a newly created instance,
   static Configuration load() => _instance ?? _createConfiguration();
+  
+  /// checks if a [Configuration] exists in the cache
   static bool isLoaded() => null != _instance;
 
+  /// creates a [Configuration] by parsing it from the config file
   static Configuration _createConfiguration() {
     var configPath = _findConfigurationFile();
     Logger.log(LogLabel.config, 'Reading configuration from $configPath');
@@ -44,7 +49,7 @@ abstract class ConfigurationLoader {
 
     var parser = _getParserForFileType(path);
     var configMap = parser.parse();
-    configMap =configMap['taida'];
+    configMap = configMap['taida'];
     _cliOptions['taida']['project_root'] = _projectRoot;
 
     for (var key in configMap.keys) {
@@ -56,6 +61,7 @@ abstract class ConfigurationLoader {
     return configuration;
   }
 
+  /// search for the configuration file in the current working dir.
   static String _findConfigurationFile() {
     var cwd = Directory.current.absolute;
     var fileNames = cwd.listSync().map((file) => file.path);
@@ -73,6 +79,7 @@ Configuration file not found. Run this tool from your project root.
 Current directory is ${cwd.absolute.path}''');
   }
 
+  /// return a Parser for given FileType
   static AbstractConfigParser _getParserForFileType(String path) {
     var parsers = <AbstractConfigParser>[
       YamlConfigParser(path),
