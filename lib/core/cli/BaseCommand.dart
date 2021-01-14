@@ -86,7 +86,7 @@ abstract class BaseCommand extends Command {
         if (module.canRun(List.of(queue))) {
           Logger.verbose('Running Module $module...');
           await module.run(name);
-          Logger.verbose('module finished running');
+          Logger.log(module.logLabel, 'Finished running tasks.');
           queue.remove(module);
         }
       }
@@ -124,12 +124,14 @@ abstract class BaseCommand extends Command {
     if (!await buildFile.exists()) await buildFile.create();
     await buildFile.writeAsString(config.buildHash);
 
-    Logger.emptyLines();
-    Logger.verbose('Removing old output');
+    if (name == 'build') {
+      Logger.emptyLines();
+      Logger.verbose('Removing old output');
 
-    var outputDir =
-        Directory('${config.projectRoot}/${config.outputDirectory}');
-    if (outputDir.existsSync()) outputDir.deleteSync(recursive: true);
+      var outputDir =
+          Directory('${config.projectRoot}/${config.outputDirectory}');
+      if (outputDir.existsSync()) outputDir.deleteSync(recursive: true);
+    }
     await _install(config);
     await _execute();
     Logger.verbose('Removing temporary files');

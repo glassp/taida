@@ -23,3 +23,6 @@ taida:
     scss:
       - entry: assets/scss/app.scss #relative path to file from this file
         output: public/assets/app.css #relative path to file from this file
+    dart:
+      - entry: assets/dart/app.dart
+        output: public/assets/app.dart.js
