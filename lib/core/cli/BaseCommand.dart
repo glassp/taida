@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:meta/meta.dart';
@@ -11,9 +12,13 @@ import 'package:taida/modules/ModuleLoader.dart';
 import 'package:args/command_runner.dart';
 import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:taida/core/log/Logger.dart';
+import 'package:watcher/watcher.dart';
 
 /// Abstraction for the Commands that can be invoked for the taida command.
 abstract class BaseCommand extends Command {
+  final Map<Watcher, Module> _watchers = {};
+  final List<StreamSubscription> _streamSubscribers = [];
+
   BaseCommand() {
     argParser
       ..addFlag('debug',
@@ -72,6 +77,7 @@ abstract class BaseCommand extends Command {
 
   /// Executes the command action on all Modules in the module queue
   void _execute() async {
+    var config = ConfigurationLoader.load();
     var queue = _createModuleQueue();
     while (queue?.isNotEmpty ?? false) {
       final shadow = List<Module>.from(queue);
@@ -95,6 +101,36 @@ abstract class BaseCommand extends Command {
         throw NoRunnableModuleException('No module can be run anymore.');
       }
     }
+    if (config.watch && _streamSubscribers.isEmpty) {
+      Logger.verbose('Starting to watch files as defined by modules');
+      for (var watcher in _watchers.keys) {
+        var subscriber = watcher.events.listen((event) {
+          Logger.verbose('Terminating file watchers and reruning pipeline');
+          _streamSubscribers.forEach((subscription) => subscription.cancel());
+          _streamSubscribers.clear();
+          _execute();
+        });
+        _streamSubscribers.add(subscriber);
+      }
+      ProcessSignal.sigint.watch().listen((_) {
+        Logger.emptyLines();
+        Logger.verbose('SIGINT detected. Terminating all watcher');
+        _streamSubscribers.forEach((subscription) => subscription.cancel());
+        _streamSubscribers.clear();
+        Logger.verbose('Terminated all watchers. Now terminating program');
+        var config = ConfigurationLoader.load();
+        Logger.verbose('Removing temporary files');
+        Directory('${config.projectRoot}/taida/workDir')
+            .deleteSync(recursive: true);
+        Logger.emptyLines();
+        var diff = DateTime.now().difference(TAIDA_EXECUTION_START);
+        var timeDiff =
+            '${diff.inHours}h ${diff.inMinutes}m ${diff.inSeconds}s ${diff.inMilliseconds}ms';
+
+        Logger.log(LogLabel.success, 'Build completed successful in $timeDiff');
+        exit(0);
+      });
+    }
   }
 
   /// Creates the run Queue of all Modules if they're defined in the config
@@ -104,9 +140,13 @@ abstract class BaseCommand extends Command {
     var registeredModules = ModuleLoader.registeredModules;
 
     // add all Modules only once
-    for (String module in config.modules.toSet().toList()) {
-      if (registeredModules.containsKey(module)) {
-        queue.add(registeredModules[module]);
+    for (String moduleName in config.modules.toSet().toList()) {
+      if (registeredModules.containsKey(moduleName)) {
+        var module = registeredModules[moduleName];
+        var watchers = module.watchers;
+        watchers
+            .forEach((watcher) => _watchers.putIfAbsent(watcher, () => module));
+        queue.add(registeredModules[moduleName]);
       }
     }
     return queue;
@@ -134,8 +174,10 @@ abstract class BaseCommand extends Command {
     }
     await _install(config);
     await _execute();
-    Logger.verbose('Removing temporary files');
-    Directory('${config.projectRoot}/taida/workDir')
-        .deleteSync(recursive: true);
+    if (!config.watch) {
+      Logger.verbose('Removing temporary files');
+      Directory('${config.projectRoot}/taida/workDir')
+          .deleteSync(recursive: true);
+    }
   }
 }

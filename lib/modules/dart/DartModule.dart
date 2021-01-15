@@ -5,6 +5,7 @@ import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
 import 'package:taida/taida.dart';
+import 'package:watcher/watcher.dart';
 
 class DartModule extends Module {
   @override
@@ -29,8 +30,10 @@ class DartModule extends Module {
   void _build(Configuration config) async {
     for (var task in config.moduleConfiguration['dart']) {
       var outputFile = task['output'].replaceAll(RegExp(r'(\.dart)?\.js$'), '');
-      var cacheBusterSuffix = config.enableCacheBuster ? '-${config.buildHash}' : '';
-      Logger.verbose('Creating File ${config.projectRoot}/${outputFile}${cacheBusterSuffix}.dart.js');
+      var cacheBusterSuffix =
+          config.enableCacheBuster ? '-${config.buildHash}' : '';
+      Logger.verbose(
+          'Creating File ${config.projectRoot}/${outputFile}${cacheBusterSuffix}.dart.js');
       var process = await Process.run('dart', [
         'compile',
         'js',
@@ -88,5 +91,14 @@ class DartModule extends Module {
     } else {
       Logger.log(logLabel, 'Task completed successfully');
     }
+  }
+
+  @override
+  List<Watcher> get watchers {
+    var config = ConfigurationLoader.load();
+    return [
+      DirectoryWatcher('${config.projectRoot}/assets/dart',
+          pollingDelay: Duration(seconds: 5))
+    ];
   }
 }

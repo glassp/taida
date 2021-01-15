@@ -8,6 +8,7 @@ import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
 import 'package:taida/taida.dart';
 import 'package:sass/sass.dart' as sass;
+import 'package:watcher/watcher.dart';
 
 class ScssModule extends Module {
   @override
@@ -50,7 +51,6 @@ class ScssModule extends Module {
 
   /// The code that gets executed for the build command
   void _build(Configuration config) async {
-    // TODO add watch mode
     var moduleConfig = config.moduleConfiguration[name];
     for (var task in moduleConfig) {
       var source = File('${config.projectRoot}/${task['entry']}');
@@ -115,4 +115,13 @@ class ScssModule extends Module {
 
   @override
   String get description => 'Compiles and lints scss/sass files';
+
+  @override
+  List<Watcher> get watchers {
+    var config = ConfigurationLoader.load();
+    return [
+      DirectoryWatcher('${config.projectRoot}/assets/scss',
+          pollingDelay: Duration(seconds: 5))
+    ];
+  }
 }

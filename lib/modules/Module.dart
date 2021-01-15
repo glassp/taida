@@ -1,5 +1,6 @@
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
+import 'package:watcher/watcher.dart';
 
 /// Abstraction for a Module.
 /// Every [Module] should expose a class named "TaidaModule" which will be loaded.
@@ -35,4 +36,7 @@ abstract class Module {
 
   @override
   bool operator ==(other) => name == other.name;
+
+  /// Returns a list of [Watcher] that check for changes and are used to rerun the tasks in the module.
+  List<Watcher> get watchers;
 }
