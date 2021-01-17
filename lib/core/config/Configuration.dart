@@ -32,4 +32,5 @@ class Configuration {
   @override
   String toString() => _Configuration.configAsString(this);
   bool get logToFile => logFile?.isNotEmpty == false;
+  String get workingDirectory => '${projectRoot}/taida/workDir';
 }

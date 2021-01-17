@@ -34,7 +34,7 @@ class DartModule extends Module {
           config.enableCacheBuster ? '-${config.buildHash}' : '';
       Logger.verbose(
           'Creating File ${config.projectRoot}/${outputFile}${cacheBusterSuffix}.dart.js');
-      var process = await Process.run('dart', [
+      await Process.run('dart', [
         'compile',
         'js',
         if (!config.debug) '-m',
@@ -42,8 +42,6 @@ class DartModule extends Module {
         '${config.projectRoot}/${outputFile}${cacheBusterSuffix}.dart.js',
         '${config.projectRoot}/${task['entry']}'
       ]);
-      print(process.exitCode);
-      print(process.stderr);
     }
   }
 
