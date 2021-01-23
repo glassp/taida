@@ -7,8 +7,8 @@ import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
-import 'package:taida/modules/copy/DirectoryCopy.dart';
-import 'package:taida/modules/html/ModuleContent.dart';
+import 'package:taida/util/DirectoryCopy.dart';
+import 'package:taida/util/ModuleContent.dart';
 import 'package:watcher/watcher.dart';
 
 part '_DOM.dart';
