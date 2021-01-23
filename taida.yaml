@@ -4,25 +4,19 @@ taida:
   # must not contain a leading / and must be relative to this file
   progress: true #default false [log@v0.3]
   enable_cache_buster: true #default false
-  modules: #[core@v0.1]
-    - copy
-    - minify
-    - preload
-    - template
-    - scss
-    - typescript
-    - dart
-    - manifest
-    - sitemap
   module_config:
     copy:
       - from: 
           - copy
           - res
-        to: public/assets/res
+        to: assets/res
     scss:
       - entry: assets/scss/app.scss #relative path to file from this file
-        output: public/assets/app.css #relative path to file from this file
+        output: assets/app.css #relative path to file from this file
     dart:
       - entry: assets/dart/app.dart
-        output: public/assets/app.dart.js
+        output: assets/app.dart.js
+    html:
+      templates_directory: templates
+      pages_directory: pages
+      partials_directory: _partials

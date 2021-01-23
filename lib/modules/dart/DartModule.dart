@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
+import 'package:html/dom.dart';
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
+import 'package:taida/modules/html/ModuleContent.dart';
 import 'package:taida/taida.dart';
 import 'package:watcher/watcher.dart';
 
@@ -33,15 +35,22 @@ class DartModule extends Module {
       var cacheBusterSuffix =
           config.enableCacheBuster ? '-${config.buildHash}' : '';
       Logger.verbose(
-          'Creating File ${config.projectRoot}/${outputFile}${cacheBusterSuffix}.dart.js');
+          'Creating File ${config.outputDirectory}/${outputFile}${cacheBusterSuffix}.dart.js');
       await Process.run('dart', [
         'compile',
         'js',
         if (!config.debug) '-m',
         '-o',
-        '${config.projectRoot}/${outputFile}${cacheBusterSuffix}.dart.js',
+        '${config.outputDirectory}/${outputFile}${cacheBusterSuffix}.dart.js',
         '${config.projectRoot}/${task['entry']}'
       ]);
+      var element = Element.tag('script');
+      element.attributes.addAll({
+        'src':
+            '${config.outputDirectory}/${outputFile}${cacheBusterSuffix}.dart.js',
+        'type': 'application/javascript'
+      });
+      ModuleContent.registerContent(element, false);
     }
   }
 

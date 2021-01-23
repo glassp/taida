@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
+import 'package:html/dom.dart';
 import 'package:taida/Exception/Failure/FailureException.dart';
 import 'package:taida/_taida.dart';
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
+import 'package:taida/modules/html/ModuleContent.dart';
 import 'package:taida/taida.dart';
 import 'package:sass/sass.dart' as sass;
 import 'package:watcher/watcher.dart';
@@ -64,12 +66,20 @@ class ScssModule extends Module {
           config.enableCacheBuster ? '-${config.buildHash}' : '';
       var filename = task['output'].replaceAll(RegExp(r'\.css$'), '');
       var outputFile =
-          File('${config.projectRoot}/${filename}${cacheBusterSuffix}.css');
+          File('${config.outputDirectory}/${filename}${cacheBusterSuffix}.css');
 
       if (!await outputFile.exists()) {
         Logger.verbose('Creating File ${outputFile.path}');
         await outputFile.create(recursive: true);
       }
+      var element = Element.tag('link');
+      element.attributes.addAll({
+        'href': outputFile.absolute.path,
+        'rel': 'stylesheet',
+        'type': 'text/css',
+        if (task.containsKey('media')) 'media': task['media']
+      });
+      ModuleContent.registerContent(element);
       await outputFile.writeAsString(css);
     }
   }
