@@ -46,9 +46,8 @@ abstract class BaseCommand extends Command {
   /// checks if the node_modules dir exists and if not it will run npm install
   /// Throws [EnvironmentError] if node/npm is not installed.
   void _install(Configuration config) async {
-    var process = await Process.start('node', ['-v']);
+    var process = await Process.run('node', ['-v']);
     var nodeInstalled = (await process.exitCode) == 0;
-    await process.kill();
 
     if (!nodeInstalled) {
       throw EnvironmentError(
@@ -68,6 +67,7 @@ abstract class BaseCommand extends Command {
         .writeAsString(TAIDA_LIBRARY_VERSION);
   }
 
+  /// checks if the dependencies were installed for this library version
   Future<bool> _isOutdated() async {
     var installVersionFile = File(TAIDA_LIBRARY_ROOT + '/installVersion.txt');
     if (!await installVersionFile.exists()) return true;
@@ -90,6 +90,9 @@ abstract class BaseCommand extends Command {
           continue;
         }
         if (module.canRun(List.of(queue))) {
+          Logger.verbose('Normalizing moduleConfiguration for module $module');
+          config.moduleConfiguration[module.name] = module
+              .normalizeModuleConfig(config.moduleConfiguration[module.name]);
           Logger.verbose('Running Module $module...');
           await module.run(name);
           Logger.log(module.logLabel, 'Finished running tasks.');
@@ -170,7 +173,7 @@ abstract class BaseCommand extends Command {
 
       var outputDir =
           Directory('${config.projectRoot}/${config.outputDirectory}');
-      if (outputDir.existsSync()) outputDir.deleteSync(recursive: true);
+      if (await outputDir.exists()) await outputDir.delete(recursive: true);
     }
     await _install(config);
     await _execute();

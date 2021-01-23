@@ -28,7 +28,7 @@ abstract class ConfigurationLoader {
   ];
 
   @internal
-  static set cliOptions(options) {
+  static set cliOptions(Map<String, dynamic> options) {
     _cliOptions ??= options;
   }
 
@@ -52,6 +52,10 @@ abstract class ConfigurationLoader {
     var parser = _getParserForFileType(path);
     var configMap = parser.parse();
     configMap = configMap['taida'];
+
+    // Init cliOptions if not yet done
+    cliOptions = <String, dynamic>{};
+    _cliOptions.putIfAbsent('taida', () => <String, dynamic>{});
     _cliOptions['taida']['project_root'] = _projectRoot;
     _cliOptions['taida']['build_hash'] = sha256
         .convert(utf8.encode(DateTime.now().toIso8601String()))

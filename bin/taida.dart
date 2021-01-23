@@ -9,7 +9,12 @@ import 'package:taida/taida.dart';
 void main(List<String> arguments) async {
   var start = TAIDA_EXECUTION_START;
   try {
-    await runApp().run(arguments);
+    if (arguments.isNotEmpty) {
+      await runApp().run(arguments);
+    } else {
+      await runApp().run(['help']);
+      return;
+    }
     var config = ConfigurationLoader.load();
     if (!config.watch) {
       Logger.emptyLines();
@@ -18,6 +23,7 @@ void main(List<String> arguments) async {
           '${diff.inHours}h ${diff.inMinutes}m ${diff.inSeconds}s ${diff.inMilliseconds}ms';
 
       Logger.log(LogLabel.success, 'Build completed successful in $timeDiff');
+      exit(0);
     }
   } on FailureException catch (e) {
     Logger.emptyLines();

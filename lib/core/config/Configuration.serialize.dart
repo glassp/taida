@@ -10,15 +10,14 @@ class _Configuration {
 
     map = map['taida'];
     return Configuration(
-        outputDirectory: map['output_dir'],
-        debug: map['debug'],
+        outputDirectory: '${map['project_root']}/${map['output_dir']}',
+        debug: map['debug'] ?? false,
         projectRoot: map['project_root'],
-        verbose: map['verbose'],
+        verbose: map['verbose'] ?? false,
         watch: map['watch'] ?? false,
         enableCacheBuster: map['enable_cache_buster'] ?? false,
         logFile: map['log_file'],
         buildHash: map['build_hash'],
-        modules: map['modules'],
         moduleConfiguration: map['module_config']);
   }
 
@@ -34,7 +33,7 @@ class _Configuration {
       'log_file': '"${config.logFile ?? ''}"',
       '\$logToFile': config.logToFile,
       'build_hash': '"${config.buildHash}"',
-      'modules': config.modules.toString(),
+      '\$modules': '${config.modules}',
       'module_config': {
         for (var key in config.moduleConfiguration.keys)
           '$key': '${config.moduleConfiguration[key]}',

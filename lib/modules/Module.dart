@@ -39,4 +39,9 @@ abstract class Module {
 
   /// Returns a list of [Watcher] that check for changes and are used to rerun the tasks in the module.
   List<Watcher> get watchers;
+
+  /// Used to normalize the configuration for this module before the module is executed.
+  /// Can be used to check for null values or to add additional computable configurations.
+  dynamic normalizeModuleConfig(dynamic moduleConfiguration) =>
+      moduleConfiguration;
 }
