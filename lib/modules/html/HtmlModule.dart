@@ -44,8 +44,7 @@ class HtmlModule extends Module {
   }
 
   @override
-  String get description =>
-      'Builds the HTML and generates layout files.';
+  String get description => 'Builds the HTML and generates layout files.';
 
   @override
   LogLabel get logLabel => LogLabel(

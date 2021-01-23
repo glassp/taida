@@ -15,18 +15,18 @@ class _DOM {
     for (var tag in tree.querySelectorAll('taida')) {
       var sourcePath = resolvePath(tag.attributes['src']);
       if (sourcePath.startsWith(config.workingDirectory)) {
-        sourcePath = sourcePath.replaceFirst('${config.workingDirectory}/html/', module.templatesDir);
+        sourcePath = sourcePath.replaceFirst(
+            '${config.workingDirectory}/html/', module.templatesDir);
       }
       if (!sourcePath.endsWith('.html')) {
-        sourcePath = sourcePath+'.html';
+        sourcePath = sourcePath + '.html';
       }
       var selector = tag.attributes['selector'] ?? 'body';
       var sourceFile = File(sourcePath);
       var dom = parse(await sourceFile.readAsString());
       var element = dom.querySelector(selector);
       if (config.debug) {
-        var comment =
-            Comment('SOURCE: ${sourceFile.absolute.path}');
+        var comment = Comment('SOURCE: ${sourceFile.absolute.path}');
         tag.parent.insertBefore(comment, tag);
       }
       if (element.children.length > 1) {
@@ -59,7 +59,6 @@ class _DOM {
     }
     content.replaceAll('<react', '<div');
     await file.writeAsString(content);
-
   }
 
   /// removes any html comment
@@ -76,18 +75,23 @@ class _DOM {
     return path.replaceAll('${config.workingDirectory}/html/', '');
   }
 
-  /// creates a output 
+  /// creates a output
   void buildPage() async {
     var config = ConfigurationLoader.load();
     if (!config.debug && isPartial()) return;
     await _replaceTaidaTags();
     await _replaceReactTags();
     await _addModuleContent();
-    if (!config.debug) {await _removeComments(); await _minify();}
+    if (!config.debug) {
+      await _removeComments();
+      await _minify();
+    }
     var subDirectory = isPartial() ? '_layout' : '';
-    var path = '${config.outputDirectory}/${subDirectory}${_relativeFilePath()}';
+    var path =
+        '${config.outputDirectory}/${subDirectory}${_relativeFilePath()}';
     if (!isPartial()) {
-      path = path.replaceFirst('/${config.moduleConfiguration['html']['pages_directory']}/', '');
+      path = path.replaceFirst(
+          '/${config.moduleConfiguration['html']['pages_directory']}/', '');
     }
     var outputFile = File(path);
     if (!await outputFile.exists()) {

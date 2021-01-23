@@ -5,7 +5,8 @@ import 'package:taida/core/log/Logger.dart';
 class DirectoryCopy {
   /// Recursive copy of all Dirs and Files in `source` to `destination`.
   /// Also returns a list of all files that have been copied
-  static Future<List<File>> copy(Directory source, Directory destination) async {
+  static Future<List<File>> copy(
+      Directory source, Directory destination) async {
     if (!await source.exists()) {
       Logger.warn('${source.path} does not exist. Skipping...');
       return [];
