@@ -30,7 +30,7 @@ class DartModule extends Module {
   String get name => 'dart';
 
   void _build(Configuration config) async {
-    for (var task in config.moduleConfiguration['dart']) {
+    for (var task in moduleConfiguration) {
       var outputFile = task['output'].replaceAll(RegExp(r'(\.dart)?\.js$'), '');
       var cacheBusterSuffix =
           config.enableCacheBuster ? '-${config.buildHash}' : '';
@@ -62,7 +62,7 @@ class DartModule extends Module {
         '${config.projectRoot}/taida/${command}/dart-report-${config.buildHash}.txt';
 
     Logger.debug(
-        'Running module dart with configuration ${config.moduleConfiguration['dart']} in ${command} mode');
+        'Running module dart with configuration ${moduleConfiguration} in ${command} mode');
 
     switch (command) {
       case 'build':

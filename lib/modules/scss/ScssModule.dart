@@ -36,9 +36,8 @@ class ScssModule extends Module {
   @override
   void run(String command) async {
     var config = ConfigurationLoader.load();
-    var moduleConfig = config.moduleConfiguration[name];
     Logger.debug(
-        'Running module $name with configuration $moduleConfig in $command mode.');
+        'Running module $name with configuration $moduleConfiguration in $command mode.');
     switch (command) {
       case 'build':
         await _build(config);

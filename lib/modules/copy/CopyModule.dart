@@ -24,9 +24,9 @@ class CopyModule extends Module {
   void run(String command) async {
     if (command != 'build') return;
     var config = ConfigurationLoader.load();
-    var moduleConfig = config.moduleConfiguration['copy'];
-    Logger.debug('Running Module $name with configuration $moduleConfig');
-    for (var task in moduleConfig) {
+    Logger.debug(
+        'Running Module $name with configuration $moduleConfiguration');
+    for (var task in moduleConfiguration) {
       var destination = Directory(config.outputDirectory + '/' + task['to']);
       for (var from in task['from']) {
         var source = Directory(config.projectRoot + '/' + from);

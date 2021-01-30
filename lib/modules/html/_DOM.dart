@@ -120,7 +120,11 @@ class _DOM {
     return file.absolute.path.contains(partialsDir);
   }
 
-  void _minify() async {}
+  /// Minifies the output.
+  void _minify() async {
+    // TODO rm space between > and <
+    // TODO check if all line breaks can be removed
+  }
 
   /// resolves the provided `path` as path string referencing directory config key
   /// e.g. @KEY => module_configuration.html.key_directory

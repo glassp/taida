@@ -91,8 +91,8 @@ abstract class BaseCommand extends Command {
         }
         if (module.canRun(List.of(queue))) {
           Logger.verbose('Normalizing moduleConfiguration for module $module');
-          config.moduleConfiguration[module.name] = module
-              .normalizeModuleConfig(config.moduleConfiguration[module.name]);
+          config.moduleConfiguration[module.name] =
+              module.normalizeModuleConfig();
           Logger.verbose('Running Module $module...');
           await module.run(name);
           Logger.log(module.logLabel, 'Finished running tasks.');

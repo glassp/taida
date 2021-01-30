@@ -1,3 +1,4 @@
+import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:watcher/watcher.dart';
@@ -13,6 +14,10 @@ abstract class Module {
 
   /// This is used by the module command to display a list of [Modules] and their description
   String get description;
+
+  /// Returns the configuration for this module.
+  dynamic get moduleConfiguration =>
+      ConfigurationLoader.load().moduleConfiguration[name];
 
   /// This is used to check if a [Module] can run its code at this point in time or not.
   /// The queue of pending modules is passed to `queue`
@@ -42,6 +47,5 @@ abstract class Module {
 
   /// Used to normalize the configuration for this module before the module is executed.
   /// Can be used to check for null values or to add additional computable configurations.
-  dynamic normalizeModuleConfig(dynamic moduleConfiguration) =>
-      moduleConfiguration;
+  dynamic normalizeModuleConfig() => moduleConfiguration;
 }
