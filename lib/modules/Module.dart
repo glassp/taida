@@ -22,6 +22,7 @@ abstract class Module {
   /// This is used to check if a [Module] can run its code at this point in time or not.
   /// The queue of pending modules is passed to `queue`
   /// The executed command is passed to `command`.
+  /// TODO adjust to use Phase based system
   bool canRun(
     List<Module> queue,
   );

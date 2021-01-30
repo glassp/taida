@@ -137,6 +137,7 @@ abstract class BaseCommand extends Command {
   }
 
   /// Creates the run Queue of all Modules if they're defined in the config
+  /// TODO use a phase bases system e.g. PREPROCESSING, COMPILING, EMITING, ASSEMBELING, POSTPROCESSING
   List<Module> _createModuleQueue() {
     var config = ConfigurationLoader.load();
     var queue = <Module>[];
