@@ -126,6 +126,10 @@ class _DOM {
     // TODO check if all line breaks can be removed
   }
 
+  void sortHeadTags() async {
+    // TODO sort title, link, meta, script, misc
+  }
+
   /// resolves the provided `path` as path string referencing directory config key
   /// e.g. @KEY => module_configuration.html.key_directory
   String resolvePath(String path) {
