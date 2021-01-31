@@ -6,7 +6,7 @@ part 'Configuration.serialize.dart';
 /// Data Class holding the Configuration Data
 class Configuration {
   final String projectRoot;
-  final String outputDirectory;
+  final String outputDirectoryName;
   final bool debug;
   final bool watch;
   final bool verbose;
@@ -16,7 +16,7 @@ class Configuration {
   final Map<String, dynamic> moduleConfiguration;
 
   Configuration(
-      {this.outputDirectory = 'build',
+      {this.outputDirectoryName = 'build',
       this.debug = false,
       this.projectRoot = '',
       this.verbose = false,
@@ -32,6 +32,7 @@ class Configuration {
   String toString() => _Configuration.configAsString(this);
   bool get logToFile => logFile?.isNotEmpty == false;
   String get workingDirectory => '${projectRoot}/taida/workDir';
+  String get outputDirectory => '${projectRoot}/${outputDirectoryName}';
   List<String> get modules =>
       ModuleLoader.registeredModules.keys.toList(growable: false);
 }

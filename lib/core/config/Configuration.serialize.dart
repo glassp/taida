@@ -10,7 +10,7 @@ class _Configuration {
 
     map = map['taida'];
     return Configuration(
-        outputDirectory: '${map['project_root']}/${map['output_dir']}',
+        outputDirectoryName: '${map['output_dir']}',
         debug: map['debug'] ?? false,
         projectRoot: map['project_root'],
         verbose: map['verbose'] ?? false,
@@ -24,6 +24,7 @@ class _Configuration {
   static String configAsString(Configuration config) {
     return {
       'output_dir': '"${config.outputDirectory}"',
+      '\$outputDirectory': '"${config.outputDirectory}"',
       'debug': config.debug,
       'project_root': '"${config.projectRoot}"',
       '\$workingDirectory': '"${config.workingDirectory}"',
