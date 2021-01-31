@@ -123,8 +123,7 @@ abstract class BaseCommand extends Command {
         Logger.verbose('Terminated all watchers. Now terminating program');
         var config = ConfigurationLoader.load();
         Logger.verbose('Removing temporary files');
-        Directory(config.workingDirectory)
-            .deleteSync(recursive: true);
+        Directory(config.workingDirectory).deleteSync(recursive: true);
         Logger.emptyLines();
         var diff = DateTime.now().difference(TAIDA_EXECUTION_START);
         var timeDiff =
