@@ -1,6 +1,16 @@
+import 'dart:io';
+
 import 'package:ansicolor/ansicolor.dart';
+import 'package:html/dom.dart';
+import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/modules/Module.dart';
+import 'package:taida/modules/meta/submodules/WebManifest.dart';
+import 'package:taida/modules/meta/submodules/WebManifestIcons.dart';
+import 'package:taida/modules/meta/submodules/WebManifestRelatedApplications.dart';
+import 'package:taida/util/ImageConverter.dart';
+import 'package:taida/util/ModuleContent.dart';
+import 'package:taida/util/Pubspec.dart';
 import 'package:watcher/watcher.dart';
 
 part './submodules/_PwaMetaData.dart';
