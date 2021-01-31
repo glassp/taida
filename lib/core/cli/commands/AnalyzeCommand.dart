@@ -1,4 +1,3 @@
-import 'package:args/args.dart';
 import 'package:taida/core/cli/BaseCommand.dart';
 
 class AnalyzeCommand extends BaseCommand {

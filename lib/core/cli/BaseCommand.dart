@@ -123,7 +123,7 @@ abstract class BaseCommand extends Command {
         Logger.verbose('Terminated all watchers. Now terminating program');
         var config = ConfigurationLoader.load();
         Logger.verbose('Removing temporary files');
-        Directory('${config.projectRoot}/taida/workDir')
+        Directory(config.workingDirectory)
             .deleteSync(recursive: true);
         Logger.emptyLines();
         var diff = DateTime.now().difference(TAIDA_EXECUTION_START);
@@ -144,7 +144,7 @@ abstract class BaseCommand extends Command {
     var registeredModules = ModuleLoader.registeredModules;
 
     // add all Modules only once
-    for (String moduleName in config.modules.toSet().toList()) {
+    for (var moduleName in config.modules.toSet().toList()) {
       if (registeredModules.containsKey(moduleName)) {
         var module = registeredModules[moduleName];
         var watchers = module.watchers;
