@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:meta/meta.dart';
 import 'package:taida/core/execution/ModuleRunner.dart';
 import 'package:taida/core/log/LogLabel.dart';
@@ -62,6 +63,11 @@ abstract class BaseCommand extends Command {
     await runner.installRequiredNpmDependencies();
     await runner.run(name);
     if (!config.watch) {
+      Logger.debug('Packing output as archive');
+      var archiver = ZipFileEncoder();
+      archiver.zipDirectory(Directory(config.outputDirectory),
+          filename:
+              '${config.projectRoot}/taida/archives/build-${config.buildHash}.zip');
       Logger.verbose('Removing temporary files');
       Directory('${config.projectRoot}/taida/workDir')
           .deleteSync(recursive: true);
