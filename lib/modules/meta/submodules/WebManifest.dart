@@ -1,5 +1,8 @@
+import 'dart:convert';
+
+import 'package:taida/core/config/modules/meta/RelatedApplications.dart';
+
 import 'WebManifestIcons.dart';
-import 'WebManifestRelatedApplications.dart';
 
 class WebManifest {
   final String name;
@@ -9,7 +12,7 @@ class WebManifest {
   final String backgroundColor;
   final String description;
   final List<WebManifestIcon> icons;
-  final List<WebManifestRelatedApplication> relatedApplications;
+  final List<RelatedApplications> relatedApplications;
 
   const WebManifest({
     this.name,
@@ -23,7 +26,7 @@ class WebManifest {
   });
 
   @override
-  String toString() => toJson().toString();
+  String toString() => jsonEncode(toJson());
 
   factory WebManifest.fromJson(Map<String, dynamic> json) {
     return WebManifest(
@@ -39,12 +42,10 @@ class WebManifest {
             : WebManifestIcon.fromJson(e as Map<String, dynamic>);
       })?.toList(),
       relatedApplications:
-          (json['related_applications'] as List<WebManifestRelatedApplication>)
-              ?.map((e) {
+          (json['related_applications'] as List<RelatedApplications>)?.map((e) {
         return e == null
             ? null
-            : WebManifestRelatedApplication.fromJson(
-                e as Map<String, dynamic>);
+            : RelatedApplications.fromJson(e as Map<String, dynamic>);
       })?.toList(),
     );
   }

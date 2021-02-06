@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ansicolor/ansicolor.dart';
 import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:taida/core/log/LogLabel.dart';
 
@@ -13,11 +14,10 @@ class Logger {
     }
     var config = ConfigurationLoader.load();
     if (config.logToFile) {
+      ansiColorDisabled = true;
       var logFile = File(config.projectRoot + '/' + config.logFile);
-      logFile.openWrite(mode: FileMode.append)
-        ..write(message)
-        ..flush()
-        ..close();
+      if (!logFile.existsSync()) logFile.createSync();
+      logFile.writeAsStringSync('${message}${EOL}', mode: FileMode.append);
     } else {
       print(message);
     }
@@ -37,10 +37,10 @@ class Logger {
   }
 
   /// logs the given number of lines.
-  /// if `lines` is smaller that 1 it will inly print the line once.
+  /// if `lines` is smaller that 1 it will only print the line once.
   static void emptyLines([int lines = 0]) {
     if (lines < 0) lines = 0;
-    print('\n' * lines.abs());
+    _write('\n' * lines.abs());
   }
 
   /// logs an error message
@@ -56,4 +56,6 @@ class Logger {
       log(LogLabel.verbose, message);
     }
   }
+
+  static String get EOL => Platform.isWindows ? '\r\n' : '\n';
 }

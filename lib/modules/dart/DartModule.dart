@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
 import 'package:html/dom.dart';
+import 'package:taida/core/execution/Phase.dart';
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
@@ -30,8 +31,8 @@ class DartModule extends Module {
   String get name => 'dart';
 
   void _build(Configuration config) async {
-    for (var task in moduleConfiguration) {
-      var outputFile = task['output'].replaceAll(RegExp(r'(\.dart)?\.js$'), '');
+    for (var task in config.moduleConfiguration.dart) {
+      var outputFile = task.output.replaceAll(RegExp(r'(\.dart)?\.js$'), '');
       var cacheBusterSuffix =
           config.enableCacheBuster ? '-${config.buildHash}' : '';
       Logger.verbose(
@@ -42,12 +43,11 @@ class DartModule extends Module {
         if (!config.debug) '-m',
         '-o',
         '${config.outputDirectory}/${outputFile}${cacheBusterSuffix}.dart.js',
-        '${config.projectRoot}/${task['entry']}'
+        '${config.projectRoot}/${task.entry}'
       ]);
       var element = Element.tag('script');
       element.attributes.addAll({
-        'src':
-            '${config.outputDirectory}/${outputFile}${cacheBusterSuffix}.dart.js',
+        'src': '/${outputFile}${cacheBusterSuffix}.dart.js',
         'type': 'application/javascript'
       });
       ModuleContent.registerContent(element, false);
@@ -62,7 +62,7 @@ class DartModule extends Module {
         '${config.projectRoot}/taida/${command}/dart-report-${config.buildHash}.txt';
 
     Logger.debug(
-        'Running module dart with configuration ${moduleConfiguration} in ${command} mode');
+        'Running module dart with configuration ${config.moduleConfiguration.dart} in ${command} mode');
 
     switch (command) {
       case 'build':
@@ -108,4 +108,14 @@ class DartModule extends Module {
           pollingDelay: Duration(seconds: 5))
     ];
   }
+
+  @override
+  bool get isConfigured {
+    var config = ConfigurationLoader.load();
+    return null != config.moduleConfiguration.dart &&
+        config.moduleConfiguration.dart.isNotEmpty;
+  }
+
+  @override
+  Phase get executionTime => Phase.PROCESSING;
 }

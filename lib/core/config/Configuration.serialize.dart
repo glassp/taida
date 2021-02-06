@@ -1,44 +1,45 @@
 part of 'Configuration.dart';
 
 /// Logic for serializing the Configuration
-class _Configuration {
-  static Configuration fromMap(Map<String, dynamic> map) {
-    if (!map.containsKey('taida')) {
+abstract class _Configuration {
+  static Configuration fromJson(Map<String, dynamic> json) {
+    if (!json.containsKey('taida')) {
       throw InvalidConfigurationFormatException(
           'Configuration is not formated properly. Missing global "taida" key.');
     }
 
-    map = map['taida'];
+    json = json['taida'];
     return Configuration(
-        outputDirectoryName: '${map['output_dir']}',
-        debug: map['debug'] ?? false,
-        projectRoot: map['project_root'],
-        verbose: map['verbose'] ?? false,
-        watch: map['watch'] ?? false,
-        enableCacheBuster: map['enable_cache_buster'] ?? false,
-        logFile: map['log_file'],
-        buildHash: map['build_hash'],
-        moduleConfiguration: map['module_config']);
+      projectRoot: json['project_root'] as String,
+      outputDirectoryName: json['output_dir'] as String ?? 'build',
+      enableCacheBuster: json['enable_cache_buster'] as bool ?? false,
+      logFile: json['log_file'] as String,
+      debug: json['debug'] as bool ?? false,
+      verbose: json['verbose'] as bool ?? false,
+      watch: json['watch'] as bool ?? false,
+      buildHash: json['build_hash'] as String,
+      moduleConfiguration: json['module_config'] == null
+          ? null
+          : ModuleConfiguration.fromJson(
+              json['module_config'] as Map<String, dynamic>),
+    );
   }
 
-  static String configAsString(Configuration config) {
+  static Map<String, dynamic> toJson(Configuration config) {
     return {
-      'output_dir': '"${config.outputDirectory}"',
-      '\$outputDirectory': '"${config.outputDirectory}"',
-      'debug': config.debug,
       'project_root': '"${config.projectRoot}"',
-      '\$workingDirectory': '"${config.workingDirectory}"',
-      'verbose': config.verbose,
-      'watch': config.watch,
+      'output_dir': '"${config.outputDirectory}"',
       'enable_cache_buster': config.enableCacheBuster,
       'log_file': '"${config.logFile ?? ''}"',
-      '\$logToFile': config.logToFile,
+      'debug': config.debug,
+      'verbose': config.verbose,
+      'watch': config.watch,
       'build_hash': '"${config.buildHash}"',
+      'module_config_': config.moduleConfiguration.toJson(),
+      '\$workingDirectory': '"${config.workingDirectory}"',
+      '\$logToFile': config.logToFile,
+      '\$outputDirectory': '"${config.outputDirectory}"',
       '\$modules': '${config.modules}',
-      'module_config': {
-        for (var key in config.moduleConfiguration.keys)
-          '$key': '${config.moduleConfiguration[key]}',
-      }.toString()
-    }.toString();
+    };
   }
 }

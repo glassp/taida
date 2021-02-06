@@ -29,7 +29,8 @@ class ImageConverter {
     if (process.exitCode != 0) {
       Logger.error(process.stderr);
       Logger.emptyLines();
-      throw FailureException('Error in image convertion.');
+      throw FailureException(
+          'Error in image convertion. Failed to convert ${sourceFile.path}');
     }
     return await _temporaryFile.readAsBytes();
   }

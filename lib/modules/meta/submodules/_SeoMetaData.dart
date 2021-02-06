@@ -2,10 +2,10 @@ part of '../MetaModule.dart';
 
 class _SeoMetaData implements _SubModuleInterface {
   @override
-  void run(dynamic moduleConfiguration) async {
+  void run(MetaConfiguration moduleConfiguration) async {
     var config = ConfigurationLoader.load();
     var previewImagePath =
-        '${config.projectRoot}/${moduleConfiguration['preview_image']}';
+        '${config.projectRoot}/${moduleConfiguration.previewImage}';
     var converter = ImageConverter(File(previewImagePath));
     var binaryImage = await converter.convertTo('jpeg', 627, 1200);
     var previewImage =
@@ -26,27 +26,27 @@ class _SeoMetaData implements _SubModuleInterface {
   List<Watcher> get watchers {
     var config = ConfigurationLoader.load();
     var previewImagePath =
-        '${config.projectRoot}/${config.moduleConfiguration['meta']['preview_image']}';
+        '${config.projectRoot}/${config.moduleConfiguration.meta.previewImage}';
     return [FileWatcher(previewImagePath)];
   }
 
   Map<String, String> _createMapping(
-      dynamic moduleConfiguration, String previewImagePath) {
+      MetaConfiguration moduleConfiguration, String previewImagePath) {
+    var config = ConfigurationLoader.load();
     var mapping = <String, String>{};
+    mapping.putIfAbsent('twitter:card', () => moduleConfiguration.twitter.type);
     mapping.putIfAbsent(
-        'twitter:card', () => moduleConfiguration['twitter']['type']);
+        'twitter:creator', () => moduleConfiguration.twitter.creator);
+    mapping.putIfAbsent('twitter:site', () => moduleConfiguration.twitter.site);
     mapping.putIfAbsent(
-        'twitter:creator', () => moduleConfiguration['twitter']['creator']);
+        'og:site_name', () => moduleConfiguration.openGraph.site);
+    mapping.putIfAbsent('og:type', () => moduleConfiguration.openGraph.type);
     mapping.putIfAbsent(
-        'twitter:site', () => moduleConfiguration['twitter']['site']);
-    mapping.putIfAbsent(
-        'og:site_name', () => moduleConfiguration['open_graph']['site']);
-    mapping.putIfAbsent(
-        'og:type', () => moduleConfiguration['open_graph']['type']);
-    mapping.putIfAbsent('keywords',
-        () => (moduleConfiguration['keywords'] as List<String>).join(', '));
-    mapping.putIfAbsent('og:image', () => previewImagePath);
-    mapping.putIfAbsent('twitter:image', () => previewImagePath);
+        'keywords', () => moduleConfiguration.keywords.join(', '));
+    mapping.putIfAbsent('og:image',
+        () => previewImagePath.replaceFirst(config.outputDirectory, ''));
+    mapping.putIfAbsent('twitter:image',
+        () => previewImagePath.replaceFirst(config.outputDirectory, ''));
     return mapping;
   }
 }

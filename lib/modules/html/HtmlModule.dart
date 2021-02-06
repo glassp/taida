@@ -4,10 +4,12 @@ import 'package:ansicolor/ansicolor.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:taida/core/config/ConfigurationLoader.dart';
+import 'package:taida/core/execution/Phase.dart' as execution;
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
 import 'package:taida/util/DirectoryCopy.dart';
+import 'package:taida/util/ImageConverter.dart';
 import 'package:taida/util/ModuleContent.dart';
 import 'package:watcher/watcher.dart';
 
@@ -16,20 +18,17 @@ part '_DOM.dart';
 class HtmlModule extends Module {
   final String templatesDir;
   final String partialsDir;
-  final String globalsDir;
   final String pagesDir;
 
-  HtmlModule(
-      this.templatesDir, this.partialsDir, this.globalsDir, this.pagesDir);
+  HtmlModule(this.templatesDir, this.partialsDir, this.pagesDir);
   factory HtmlModule.load() {
     var config = ConfigurationLoader.load();
     var templatesDir =
-        '${config.projectRoot}/${config.moduleConfiguration['html']['templates_directory']}';
+        '${config.projectRoot}/${config.moduleConfiguration.html.templatesDirectory}';
     return HtmlModule(
         templatesDir,
-        '${templatesDir}/${config.moduleConfiguration['html']['partials_directory']}',
-        '${templatesDir}/${config.moduleConfiguration['html']['globals_directory']}',
-        '${templatesDir}/${config.moduleConfiguration['html']['pages_directory']}');
+        '${templatesDir}/${config.moduleConfiguration.html.partialsDirectory}',
+        '${templatesDir}/${config.moduleConfiguration.html.pagesDirectory}');
   }
 
   @override
@@ -39,7 +38,13 @@ class HtmlModule extends Module {
 
   @override
   bool canRun(List<Module> queue) {
-    var moduleDepenencies = ['scss', 'typescript', 'dart', 'javascript'];
+    var moduleDepenencies = [
+      'scss',
+      'typescript',
+      'dart',
+      'javascript',
+      'meta'
+    ];
     return !queue.any((module) => moduleDepenencies.contains(module.name));
   }
 
@@ -64,7 +69,7 @@ class HtmlModule extends Module {
   void _build() async {
     var config = ConfigurationLoader.load();
     var source = Directory(templatesDir);
-    var destination = Directory('${config.workingDirectory}/html/');
+    var destination = Directory('${config.workingDirectory}/html');
     Logger.debug('Copying files from ${source.path}/ to ${destination.path}');
     var copiedFiles = await DirectoryCopy.copy(source, destination);
     for (var file in copiedFiles) {
@@ -74,4 +79,13 @@ class HtmlModule extends Module {
 
   @override
   List<Watcher> get watchers => [DirectoryWatcher(templatesDir)];
+
+  @override
+  bool get isConfigured {
+    var config = ConfigurationLoader.load();
+    return null != config.moduleConfiguration.html;
+  }
+
+  @override
+  execution.Phase get executionTime => execution.Phase.EMIT;
 }

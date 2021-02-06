@@ -1,4 +1,4 @@
-import 'package:taida/core/config/ConfigurationLoader.dart';
+import 'package:taida/core/execution/Phase.dart';
 import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:watcher/watcher.dart';
@@ -15,17 +15,16 @@ abstract class Module {
   /// This is used by the module command to display a list of [Modules] and their description
   String get description;
 
-  /// Returns the configuration for this module.
-  dynamic get moduleConfiguration =>
-      ConfigurationLoader.load().moduleConfiguration[name];
-
   /// This is used to check if a [Module] can run its code at this point in time or not.
   /// The queue of pending modules is passed to `queue`
   /// The executed command is passed to `command`.
-  /// TODO adjust to use Phase based system
+  @Deprecated('Replaced by executionTime')
   bool canRun(
     List<Module> queue,
   );
+
+  /// returns the phase the module should be executed in
+  Phase get executionTime;
 
   /// checks if the [Module] can handle the given `command`
   bool canHandleCommand(String command);
@@ -46,7 +45,5 @@ abstract class Module {
   /// Returns a list of [Watcher] that check for changes and are used to rerun the tasks in the module.
   List<Watcher> get watchers;
 
-  /// Used to normalize the configuration for this module before the module is executed.
-  /// Can be used to check for null values or to add additional computable configurations.
-  dynamic normalizeModuleConfig() => moduleConfiguration;
+  bool get isConfigured;
 }

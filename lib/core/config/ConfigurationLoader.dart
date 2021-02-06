@@ -56,16 +56,20 @@ abstract class ConfigurationLoader {
     // Init cliOptions if not yet done
     cliOptions = <String, dynamic>{};
     _cliOptions.putIfAbsent('taida', () => <String, dynamic>{});
-    _cliOptions['taida']['project_root'] = _projectRoot;
-    _cliOptions['taida']['build_hash'] = sha256
-        .convert(utf8.encode(DateTime.now().toIso8601String()))
-        .toString()
-        .substring(0, 8);
+    (_cliOptions['taida'] as Map<String, dynamic>)
+        .putIfAbsent('project_root', () => _projectRoot);
+    (_cliOptions['taida'] as Map<String, dynamic>).putIfAbsent(
+        'build_hash',
+        () => sha256
+            .convert(utf8.encode(DateTime.now().toIso8601String()))
+            .toString()
+            .substring(0, 8));
 
     for (var key in configMap.keys) {
-      _cliOptions['taida'].putIfAbsent(key, () => configMap[key]);
+      (_cliOptions['taida'] as Map<String, dynamic>)
+          .putIfAbsent(key, () => configMap[key]);
     }
-    var configuration = Configuration.fromMap(_cliOptions);
+    var configuration = Configuration.fromJson(_cliOptions);
     _instance = configuration;
     Logger.debug('Using configuration: \n$configuration');
     return configuration;

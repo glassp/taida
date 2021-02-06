@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:taida/Exception/Configuration/InvalidConfigurationFormat.dart';
+import 'package:taida/core/config/ModuleConfiguration.dart';
 import 'package:taida/modules/ModuleLoader.dart';
 
 part 'Configuration.serialize.dart';
@@ -13,7 +16,7 @@ class Configuration {
   final bool enableCacheBuster;
   final String logFile;
   final String buildHash;
-  final Map<String, dynamic> moduleConfiguration;
+  final ModuleConfiguration moduleConfiguration;
 
   Configuration(
       {this.outputDirectoryName = 'build',
@@ -24,13 +27,15 @@ class Configuration {
       this.enableCacheBuster = false,
       this.logFile = '',
       this.buildHash = '',
-      this.moduleConfiguration = const {}});
-  factory Configuration.fromMap(Map<String, dynamic> config) =>
-      _Configuration.fromMap(config);
+      this.moduleConfiguration});
+
+  factory Configuration.fromJson(Map<String, dynamic> config) =>
+      _Configuration.fromJson(config);
 
   @override
-  String toString() => _Configuration.configAsString(this);
-  bool get logToFile => logFile?.isNotEmpty == false;
+  String toString() => jsonEncode(toJson());
+  Map<String, dynamic> toJson() => _Configuration.toJson(this);
+  bool get logToFile => logFile?.isNotEmpty ?? false;
   String get workingDirectory => '${projectRoot}/taida/workDir';
   String get outputDirectory => '${projectRoot}/${outputDirectoryName}';
   List<String> get modules =>

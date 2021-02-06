@@ -44,6 +44,72 @@ class _DOM {
     }
   }
 
+  /// replace <seo> tags with corresponding meta tags
+  void _replaceSeoTags() async {
+    var tree = parse(await file.readAsString());
+    for (var tag in tree.querySelectorAll('seo')) {
+      var type = tag.attributes['type'];
+      var content = tag.text;
+      for (var prefix in ['', 'twitter:', 'og:']) {
+        if (prefix == '' && type == 'title') {
+          var title = Element.tag('title');
+          title.text = content;
+          tree.head.append(title);
+        }
+        var element = Element.tag('meta');
+        element.attributes.putIfAbsent('name', () => '${prefix}${type}');
+        element.attributes.putIfAbsent('content', () => content);
+        tree.head.append(element);
+      }
+      tag.remove();
+    }
+    await file.writeAsString(tree.outerHtml);
+  }
+
+  void _replaceImageTags() async {
+    var tree = parse(await file.readAsString());
+    for (var tag in tree.querySelectorAll('image')) {
+      if (tag.parent.localName == 'picture') continue;
+      if (!tag.attributes.containsKey('src') &&
+          !tag.attributes.containsKey('height') &&
+          !tag.attributes.containsKey('width')) continue;
+      var path = tag.attributes['src'];
+      var sourceFile = File(path);
+      var converter = ImageConverter(sourceFile);
+      var height = int.tryParse(tag.attributes['height']) ?? 0;
+      var width = int.tryParse(tag.attributes['width']) ?? 0;
+      var elements = <Element>[];
+      var extensions = <String>['avif', 'webp', 'jpeg'];
+      // path = path.removeFileExt()
+      for (var ext in extensions) {
+        var file = File('${path}-${height}x${width}.${ext}');
+        if (!await file.exists()) {
+          var data = await converter.convertTo(ext, height, width);
+          await file.create();
+          await file.writeAsBytes(data);
+        }
+        Element element;
+        if (ext == 'jpeg') {
+          element = Element.tag('img');
+          element.attributes.putIfAbsent('src', () => file.path);
+          element.attributes.putIfAbsent('height', () => height.toString());
+          element.attributes.putIfAbsent('width', () => width.toString());
+          element.attributes.putIfAbsent('loading', () => 'lazy');
+          element.attributes.putIfAbsent('alt', () => tag.attributes['alt']);
+        } else {
+          element = Element.tag('source');
+          element.attributes.putIfAbsent('type', () => 'image/${ext}');
+          element.attributes.putIfAbsent('srcset', () => file.path);
+        }
+        elements.add(element);
+      }
+      var element = Element.tag('picture');
+      elements.forEach((e) => element.append(e));
+      tag.replaceWith(element);
+    }
+    await file.writeAsString(tree.outerHtml);
+  }
+
   /// replaces all <react> tags with generic divs
   /// also adds a comment in debug modue to get a better understanding of where component mounts
   void _replaceReactTags() async {
@@ -79,21 +145,24 @@ class _DOM {
   void buildPage() async {
     var config = ConfigurationLoader.load();
     if (!config.debug && isPartial()) return;
+    await _replaceSeoTags();
     await _replaceTaidaTags();
     await _replaceReactTags();
     await _addModuleContent();
+    await _sortHeadTags();
     if (!config.debug) {
       await _removeComments();
       await _minify();
     }
-    var subDirectory = isPartial() ? '_layout' : '';
+    var subDirectory = isPartial() ? '_layout/' : '';
     var path =
         '${config.outputDirectory}/${subDirectory}${_relativeFilePath()}';
     if (!isPartial()) {
       path = path.replaceFirst(
-          '/${config.moduleConfiguration['html']['pages_directory']}/', '');
+          '/${config.moduleConfiguration.html.pagesDirectory}', '');
     }
     var outputFile = File(path);
+    Logger.verbose('Writing file ${outputFile.path}');
     if (!await outputFile.exists()) {
       await outputFile.create(recursive: true);
     }
@@ -104,7 +173,9 @@ class _DOM {
   void _addModuleContent() async {
     var tree = parse(await file.readAsString());
     for (var node in ModuleContent.headContents) {
-      tree.head.append(node);
+      // we need to wrap the node in a fragment or it will throw
+      var fragment = DocumentFragment.html(node.outerHtml);
+      tree.head.append(fragment);
     }
     for (var node in ModuleContent.bodyContents) {
       tree.body.append(node);
@@ -115,19 +186,32 @@ class _DOM {
   /// checks if the given File contains a partial
   bool isPartial() {
     var config = ConfigurationLoader.load();
-    var partialsDir = config.moduleConfiguration['html']['partials_directory'];
+    var partialsDir = config.moduleConfiguration.html.partialsDirectory;
 
     return file.absolute.path.contains(partialsDir);
   }
 
   /// Minifies the output.
   void _minify() async {
-    // TODO rm space between > and <
-    // TODO check if all line breaks can be removed
+    var html = await file.readAsString();
+    html = html.replaceAll(RegExp(r'>[\s\n]*<'), '><');
+    await file.writeAsString(html);
   }
 
-  void sortHeadTags() async {
+  void _sortHeadTags() async {
     // TODO sort title, link, meta, script, misc
+    var tree = parse(await file.readAsString());
+    var head = List<Element>.from(tree.head.children);
+    tree.head.children.clear();
+    for (var tag in ['title', 'link', 'meta', 'script', '']) {
+      for (var element in List<Element>.unmodifiable(head)) {
+        if (tag.isEmpty || element.localName == tag) {
+          head.remove(element);
+          tree.head.append(element);
+        }
+      }
+    }
+    await file.writeAsString(tree.outerHtml);
   }
 
   /// resolves the provided `path` as path string referencing directory config key
@@ -136,8 +220,7 @@ class _DOM {
     var regex = RegExp(r'@([A-Z]+)/(.*)');
     if (!regex.hasMatch(path)) return path;
     var configuration = ConfigurationLoader.load();
-    Map<String, dynamic> moduleConfig =
-        configuration.moduleConfiguration['html'];
+    var moduleConfig = configuration.moduleConfiguration.html.toJson();
     var match = regex.firstMatch(path);
     var configKey = '${match.group(1).toLowerCase()}_directory';
     if (moduleConfig.containsKey(configKey)) {
