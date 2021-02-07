@@ -6,14 +6,15 @@ class _SeoMetaData implements _SubModuleInterface {
     var config = ConfigurationLoader.load();
     String previewImagePath;
     if (moduleConfiguration.previewImage != null) {
-      previewImagePath =
+      var sourceImagePath =
           '${config.projectRoot}/${moduleConfiguration.previewImage}';
-      var converter = ImageConverter(File(previewImagePath));
+      var converter = ImageConverter(File(sourceImagePath));
       var binaryImage = await converter.convertTo('jpeg', 627, 1200);
       var previewImage =
           await File('${config.outputDirectory}/assets/previewImage.jpeg')
               .create(recursive: true);
       await previewImage.writeAsBytes(binaryImage);
+      previewImagePath = previewImage.path;
     }
     var mapping = _createMapping(moduleConfiguration, previewImagePath);
     for (final key in mapping.keys) {
