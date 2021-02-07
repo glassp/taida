@@ -93,7 +93,10 @@ class _DOM {
       var width = _convertSize(widthString);
       var elements = <Element>[];
       var extensions = <String>['avif', 'webp', 'jpeg'];
-      // path = path.removeFileExt()
+      var breadcrumb = path.split('.');
+      breadcrumb.removeLast();
+      path = breadcrumb.join('.');
+      if (height < 1 || width < 1) continue;
       for (var ext in extensions) {
         var file = File('${path}-${height}x${width}.${ext}');
         if (!await file.exists()) {
