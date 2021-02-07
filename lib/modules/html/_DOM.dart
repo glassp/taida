@@ -146,6 +146,7 @@ class _DOM {
     var config = ConfigurationLoader.load();
     if (!config.debug && isPartial()) return;
     await _replaceSeoTags();
+    await _replaceImageTags();
     await _replaceTaidaTags();
     await _replaceReactTags();
     await _addModuleContent();

@@ -51,6 +51,7 @@ abstract class ConfigurationLoader {
 
     var parser = _getParserForFileType(path);
     var configMap = parser.parse();
+    print(configMap);
     configMap = configMap['taida'];
 
     // Init cliOptions if not yet done
@@ -65,7 +66,7 @@ abstract class ConfigurationLoader {
             .toString()
             .substring(0, 8));
 
-    for (var key in configMap.keys) {
+    for (var key in configMap?.keys) {
       (_cliOptions['taida'] as Map<String, dynamic>)
           .putIfAbsent(key, () => configMap[key]);
     }
