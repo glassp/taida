@@ -1,5 +1,9 @@
-A sample command-line application with an entrypoint in `bin/`, library code
-in `lib/`, and example unit test in `test/`.
+Taida
+======
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+Taida is a build tool used to create websites.
+
+You may use the following commands:
+ - build
+ - analyze
+ - format

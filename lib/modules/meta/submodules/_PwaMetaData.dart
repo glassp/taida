@@ -108,6 +108,7 @@ class _PwaMetaData implements _SubModuleInterface {
     ];
     var webManifestIcons = <WebManifestIcon>[];
     var formats = <String>['avif', 'webp', 'jpeg'];
+    if (config.moduleConfiguration.meta.faviconImage == null) return [];
     var converter = ImageConverter(File(
         '${config.projectRoot}/${config.moduleConfiguration.meta.faviconImage}'));
     for (var icon in icons) {
