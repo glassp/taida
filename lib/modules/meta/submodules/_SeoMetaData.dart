@@ -6,7 +6,7 @@ class _SeoMetaData implements _SubModuleInterface {
     var config = ConfigurationLoader.load();
     String previewImagePath;
     if (moduleConfiguration.previewImage != null) {
-      var previewImagePath =
+      previewImagePath =
           '${config.projectRoot}/${moduleConfiguration.previewImage}';
       var converter = ImageConverter(File(previewImagePath));
       var binaryImage = await converter.convertTo('jpeg', 627, 1200);
@@ -14,7 +14,7 @@ class _SeoMetaData implements _SubModuleInterface {
           await File('${config.outputDirectory}/assets/previewImage.jpeg')
               .create(recursive: true);
       await previewImage.writeAsBytes(binaryImage);
-    } else {}
+    }
     var mapping = _createMapping(moduleConfiguration, previewImagePath);
     for (final key in mapping.keys) {
       if (mapping[key] == null || mapping[key].isEmpty) continue;

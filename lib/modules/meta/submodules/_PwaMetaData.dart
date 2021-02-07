@@ -34,7 +34,7 @@ class _PwaMetaData implements _SubModuleInterface {
         'msapplication-TileColor', () => moduleConfiguration.tilecolor);
     mapping.putIfAbsent('mobile-web-app-capable', () => 'yes');
     mapping.putIfAbsent('apple-mobile-web-app-capable', () => 'yes');
-    mapping.putIfAbsent('apple.mobile-web-app-status-bar-style',
+    mapping.putIfAbsent('apple-mobile-web-app-status-bar-style',
         () => moduleConfiguration.tilecolor);
     return mapping;
   }
