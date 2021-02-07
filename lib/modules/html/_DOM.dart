@@ -66,9 +66,20 @@ class _DOM {
     await file.writeAsString(tree.outerHtml);
   }
 
+  int _convertSize(String size) {
+    if (size == null || size.isEmpty) return 0;
+    var number = int.tryParse(size.replaceAll(RegExp(r'[a-zA-Z]'), '')) ?? 0;
+    var format = size.replaceAll('[0-9]', '');
+    if (format == 'px') return number;
+    if (format == 'rem') {
+      return number * 16;
+    }
+    return 0;
+  }
+
   void _replaceImageTags() async {
     var tree = parse(await file.readAsString());
-    for (var tag in tree.querySelectorAll('image')) {
+    for (var tag in tree.querySelectorAll('img')) {
       if (tag.parent.localName == 'picture') continue;
       if (!tag.attributes.containsKey('src') &&
           !tag.attributes.containsKey('height') &&
@@ -76,8 +87,10 @@ class _DOM {
       var path = tag.attributes['src'];
       var sourceFile = File(path);
       var converter = ImageConverter(sourceFile);
-      var height = int.tryParse(tag.attributes['height']) ?? 0;
-      var width = int.tryParse(tag.attributes['width']) ?? 0;
+      var heightString = tag.attributes['height'];
+      var widthString = tag.attributes['width'];
+      var height = _convertSize(heightString);
+      var width = _convertSize(widthString);
       var elements = <Element>[];
       var extensions = <String>['avif', 'webp', 'jpeg'];
       // path = path.removeFileExt()
