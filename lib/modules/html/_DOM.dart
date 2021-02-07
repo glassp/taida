@@ -66,10 +66,10 @@ class _DOM {
     await file.writeAsString(tree.outerHtml);
   }
 
-  int _convertSize(String size) {
+  double _convertSize(String size) {
     if (size == null || size.isEmpty) return 0;
-    var number = int.tryParse(size.replaceAll(RegExp(r'[a-zA-Z]'), '')) ?? 0;
-    var format = size.replaceAll('[0-9]', '');
+    var number = double.tryParse(size.replaceAll(RegExp(r'[a-zA-Z]'), '')) ?? 0;
+    var format = size.replaceAll(RegExp(r'[0-9\.]'), '');
     if (format == 'px') return number;
     if (format == 'rem') {
       return number * 16;
@@ -79,12 +79,18 @@ class _DOM {
 
   void _replaceImageTags() async {
     var tree = parse(await file.readAsString());
+    var config = ConfigurationLoader.load();
     for (var tag in tree.querySelectorAll('img')) {
       if (tag.parent.localName == 'picture') continue;
       if (!tag.attributes.containsKey('src') &&
           !tag.attributes.containsKey('height') &&
           !tag.attributes.containsKey('width')) continue;
       var path = tag.attributes['src'];
+      var resolvedPath = resolvePath(path);
+      if (path == resolvedPath && !path.startsWith(config.projectRoot)) {
+        if (path.startsWith('/')) path = path.replaceFirst('/', '');
+        path = '${config.outputDirectory}/$path';
+      }
       var sourceFile = File(path);
       var converter = ImageConverter(sourceFile);
       var heightString = tag.attributes['height'];
@@ -96,18 +102,20 @@ class _DOM {
       var breadcrumb = path.split('.');
       breadcrumb.removeLast();
       path = breadcrumb.join('.');
-      if (height < 1 || width < 1) continue;
+      if (height <= 1 || width <= 1) continue;
       for (var ext in extensions) {
-        var file = File('${path}-${height}x${width}.${ext}');
+        var file = File('${path}-${height.ceil()}x${width.ceil()}.${ext}');
         if (!await file.exists()) {
-          var data = await converter.convertTo(ext, height, width);
+          var data =
+              await converter.convertTo(ext, height.ceil(), width.ceil());
           await file.create();
           await file.writeAsBytes(data);
         }
         Element element;
         if (ext == 'jpeg') {
           element = Element.tag('img');
-          element.attributes.putIfAbsent('src', () => file.path);
+          element.attributes.putIfAbsent(
+              'src', () => file.path.replaceFirst(config.outputDirectory, ''));
           element.attributes.putIfAbsent('height', () => height.toString());
           element.attributes.putIfAbsent('width', () => width.toString());
           element.attributes.putIfAbsent('loading', () => 'lazy');
@@ -115,7 +123,8 @@ class _DOM {
         } else {
           element = Element.tag('source');
           element.attributes.putIfAbsent('type', () => 'image/${ext}');
-          element.attributes.putIfAbsent('srcset', () => file.path);
+          element.attributes.putIfAbsent('srcset',
+              () => file.path.replaceFirst(config.outputDirectory, ''));
         }
         elements.add(element);
       }
@@ -162,10 +171,10 @@ class _DOM {
     var config = ConfigurationLoader.load();
     if (!config.debug && isPartial()) return;
     await _replaceSeoTags();
-    await _replaceImageTags();
     await _replaceTaidaTags();
     await _replaceReactTags();
     await _addModuleContent();
+    await _replaceImageTags();
     await _sortHeadTags();
     if (!config.debug) {
       await _removeComments();
@@ -216,7 +225,6 @@ class _DOM {
   }
 
   void _sortHeadTags() async {
-    // TODO sort title, link, meta, script, misc
     var tree = parse(await file.readAsString());
     var head = List<Element>.from(tree.head.children);
     tree.head.children.clear();
