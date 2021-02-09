@@ -10,6 +10,7 @@ import 'package:taida/core/log/LogLabel.dart';
 import 'package:taida/core/log/Logger.dart';
 import 'package:taida/modules/Module.dart';
 import 'package:taida/modules/ModuleLoader.dart';
+import 'package:taida/util/Pubspec.dart';
 import 'package:watcher/watcher.dart';
 
 class ModuleRunner {
@@ -80,7 +81,7 @@ class ModuleRunner {
     var installVersionFile = File(TAIDA_LIBRARY_ROOT + '/installVersion.txt');
     if (!await installVersionFile.exists()) return true;
     var installVersion = await installVersionFile.readAsString();
-    return installVersion != TAIDA_LIBRARY_VERSION;
+    return installVersion != Pubspec.TAIDA_VERSION;
   }
 
   /// checks if the npm dependencies are up-to-date and reinstalls them if necessary
@@ -105,6 +106,6 @@ class ModuleRunner {
         'Installing node dependencies to ${TAIDA_LIBRARY_ROOT}/node_modules');
     await Process.run('npm', ['install'], workingDirectory: TAIDA_LIBRARY_ROOT);
     await (await File(TAIDA_LIBRARY_ROOT + '/installVersion.txt').create())
-        .writeAsString(TAIDA_LIBRARY_VERSION);
+        .writeAsString(Pubspec.TAIDA_VERSION);
   }
 }

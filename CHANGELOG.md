@@ -1,4 +1,7 @@
 # CHANGELOG
+## 1.0.4
+- [bug] fixing access to current taida installation version
+
 ## 1.0.3
  - [bug] fixing error with deleting non-existant node_modules
 
