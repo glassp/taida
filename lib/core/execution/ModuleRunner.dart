@@ -95,7 +95,9 @@ class ModuleRunner {
 
     var nodeModulesDir = Directory(TAIDA_LIBRARY_ROOT + '/node_modules');
     if (await _npmDependenciesAreOutdated()) {
-      await nodeModulesDir.delete(recursive: true);
+      if (await nodeModulesDir.exists()) {
+        await nodeModulesDir.delete(recursive: true);
+      }
     }
     if (await nodeModulesDir.exists()) return;
 
