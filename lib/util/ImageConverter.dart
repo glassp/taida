@@ -18,20 +18,24 @@ class ImageConverter {
       await _temporaryFile.writeAsString('',
           flush: true); // Enforce file to be empty
     }
-    var process = await Process.run('node', [
-      '${TAIDA_LIBRARY_ROOT}/lib/util/ImageConverter.script.js',
-      sourceFile.absolute.path,
-      _temporaryFile.absolute.path,
-      format,
-      height.toString(),
-      width.toString(),
-    ]);
+    var process = await Process.run(
+        'node',
+        [
+          '${TAIDA_LIBRARY_ROOT}/lib/util/ImageConverter.script.js',
+          sourceFile.absolute.path,
+          _temporaryFile.absolute.path,
+          format,
+          height.toString(),
+          width.toString(),
+        ],
+        workingDirectory: TAIDA_LIBRARY_ROOT);
     if (process.exitCode != 0) {
       Logger.error(process.stderr);
       Logger.emptyLines();
       throw FailureException(
           'Error in image convertion. Failed to convert ${sourceFile.path}');
     }
+    print(process.stdout);
     return await _temporaryFile.readAsBytes();
   }
 
