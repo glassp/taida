@@ -1,9 +1,13 @@
 # CHANGELOG
+## 1.0.6
+ - [cleanup] remove debug code
+ - [docs] add notice as to how to use this package.
+
 ## 1.0.5
  - [bug] fixing bug with not finding node_modules
  
 ## 1.0.4
-- [bug] fixing access to current taida installation version
+ - [bug] fixing access to current taida installation version
 
 ## 1.0.3
  - [bug] fixing error with deleting non-existant node_modules

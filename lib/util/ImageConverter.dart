@@ -35,7 +35,6 @@ class ImageConverter {
       throw FailureException(
           'Error in image convertion. Failed to convert ${sourceFile.path}');
     }
-    print(process.stdout);
     return await _temporaryFile.readAsBytes();
   }
 
