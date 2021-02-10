@@ -1,6 +1,7 @@
+// ignore_for_file: public_member_api_docs
 import 'dart:convert';
 
-import 'package:taida/core/config/modules/meta/RelatedApplications.dart';
+import '../../../core/config/modules/meta/RelatedApplications.dart';
 
 import 'WebManifestIcons.dart';
 

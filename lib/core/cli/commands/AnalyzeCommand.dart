@@ -1,5 +1,6 @@
-import 'package:taida/core/cli/BaseCommand.dart';
+import '../BaseCommand.dart';
 
+/// Command that invokes the analyze process
 class AnalyzeCommand extends BaseCommand {
   @override
   String get description =>

@@ -1,14 +1,16 @@
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
-import 'package:taida/core/config/ConfigurationLoader.dart';
-import 'package:taida/core/execution/Phase.dart';
-import 'package:taida/core/log/LogLabel.dart';
-import 'package:taida/core/log/Logger.dart';
-import 'package:taida/modules/Module.dart';
-import 'package:taida/util/DirectoryCopy.dart';
 import 'package:watcher/watcher.dart';
 
+import '../../core/config/ConfigurationLoader.dart';
+import '../../core/execution/Phase.dart';
+import '../../core/log/LogLabel.dart';
+import '../../core/log/Logger.dart';
+import '../../util/DirectoryCopy.dart';
+import '../Module.dart';
+
+/// Module handeling static copy
 class CopyModule extends Module {
   @override
   bool canRun(List<Module> queue) {
@@ -25,12 +27,12 @@ class CopyModule extends Module {
   void run(String command) async {
     if (command != 'build') return;
     var config = ConfigurationLoader.load();
-    Logger.debug(
-        'Running Module $name with configuration ${config.moduleConfiguration.copy}');
+    Logger.debug('''Running Module $name with 
+        configuration ${config.moduleConfiguration.copy}''');
     for (var task in config.moduleConfiguration.copy) {
-      var destination = Directory(config.outputDirectory + '/' + task.to);
+      var destination = Directory('${config.outputDirectory}/${task.to}');
       for (var from in task.from) {
-        var source = Directory(config.projectRoot + '/' + from);
+        var source = Directory('${config.projectRoot}/$from');
         await DirectoryCopy.copy(source, destination);
       }
     }
@@ -53,5 +55,5 @@ class CopyModule extends Module {
   }
 
   @override
-  Phase get executionTime => Phase.STATIC_PROCESSING;
+  Phase get executionTime => Phase.staticProcessing;
 }

@@ -2,17 +2,19 @@ import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
 import 'package:html/dom.dart';
-import 'package:taida/Exception/Failure/FailureException.dart';
-import 'package:taida/_taida.dart';
-import 'package:taida/core/execution/Phase.dart';
-import 'package:taida/core/log/LogLabel.dart';
-import 'package:taida/core/log/Logger.dart';
-import 'package:taida/modules/Module.dart';
-import 'package:taida/util/ModuleContent.dart';
-import 'package:taida/taida.dart';
 import 'package:sass/sass.dart' as sass;
 import 'package:watcher/watcher.dart';
 
+import '../../Exception/Failure/FailureException.dart';
+import '../../_taida.dart';
+import '../../core/execution/Phase.dart';
+import '../../core/log/LogLabel.dart';
+import '../../core/log/Logger.dart';
+import '../../taida.dart';
+import '../../util/ModuleContent.dart';
+import '../Module.dart';
+
+/// Module for handeling scss files
 class ScssModule extends Module {
   @override
   bool canHandleCommand(String command) {
@@ -38,8 +40,8 @@ class ScssModule extends Module {
   @override
   void run(String command) async {
     var config = ConfigurationLoader.load();
-    Logger.debug(
-        'Running module $name with configuration ${config.moduleConfiguration.scss} in $command mode.');
+    Logger.debug('''Running module $name with configuration 
+        ${config.moduleConfiguration.scss} in $command mode.''');
     switch (command) {
       case 'build':
         await _build(config);
@@ -70,7 +72,7 @@ class ScssModule extends Module {
           config.enableCacheBuster ? '-${config.buildHash}' : '';
       var filename = task.output.replaceAll(RegExp(r'\.css$'), '');
       var outputFile =
-          File('${config.outputDirectory}/${filename}${cacheBusterSuffix}.css');
+          File('${config.outputDirectory}/$filename$cacheBusterSuffix.css');
 
       if (!await outputFile.exists()) {
         Logger.verbose('Creating File ${outputFile.path}');
@@ -91,12 +93,12 @@ class ScssModule extends Module {
 
   /// The code that gets executed for the analyze command
   void _analyze(Configuration config) async {
-    var stylelintConfig = config.projectRoot + '/.stylelintrc';
+    var stylelintConfig = '${config.projectRoot}/.stylelintrc';
     if (!await File(stylelintConfig).exists()) {
-      stylelintConfig = TAIDA_LIBRARY_ROOT + '/config/.stylelintrc.yaml';
+      stylelintConfig = '$TAIDA_LIBRARY_ROOT/config/.stylelintrc.yaml';
     }
-    Logger.log(logLabel, 'Using stylelint config from: ${stylelintConfig}');
-    var analyzeDir = Directory(config.projectRoot + '/taida/analyze');
+    Logger.log(logLabel, 'Using stylelint config from: $stylelintConfig');
+    var analyzeDir = Directory('${config.projectRoot}/taida/analyze');
     if (!await analyzeDir.exists()) await analyzeDir.create(recursive: true);
 
     var process = await Process.run(
@@ -104,7 +106,7 @@ class ScssModule extends Module {
         [
           'stylelint',
           '--config',
-          '${stylelintConfig}',
+          '$stylelintConfig',
           '--output-file',
           '${config.projectRoot}/taida/analyze/stylelint-report-${config.buildHash}.txt',
           '${config.projectRoot}/assets/**/*.scss'
@@ -118,36 +120,35 @@ class ScssModule extends Module {
         Logger.error('Something went wrong while SCSS linted your files.');
         throw FailureException(await process.stderr.toString());
       case 2:
-        Logger.log(logLabel,
-            'Some stylelint rules failed. See report at ${config.projectRoot}/taida/analyze/stylelint-report-${config.buildHash}.txt');
+        Logger.log(logLabel, '''Some stylelint rules failed. See report at 
+${config.projectRoot}/taida/analyze/stylelint-report-${config.buildHash}.txt''');
         return;
       case 78:
-        Logger.log(
-            logLabel, 'Could not parse configuration ${stylelintConfig}.');
+        Logger.log(logLabel, 'Could not parse configuration $stylelintConfig.');
         throw FailureException(await process.stderr.toString());
     }
   }
 
   void _format(Configuration config) async {
-    var prettierConfig = config.projectRoot + '/.prettierrc';
+    var prettierConfig = '${config.projectRoot}/.prettierrc';
     if (!await File(prettierConfig).exists()) {
-      prettierConfig = TAIDA_LIBRARY_ROOT + '/config/.prettierrc.yaml';
+      prettierConfig = '$TAIDA_LIBRARY_ROOT/config/.prettierrc.yaml';
     }
-    var prettierIgnore = config.projectRoot + '/.prettierignore';
+    var prettierIgnore = '${config.projectRoot}/.prettierignore';
     if (!await File(prettierIgnore).exists()) {
-      prettierIgnore = TAIDA_LIBRARY_ROOT + '/config/.prettierignore';
+      prettierIgnore = '$TAIDA_LIBRARY_ROOT/config/.prettierignore';
     }
-    Logger.log(logLabel,
-        'Using prettier config from ${prettierConfig} and ignore file from ${prettierIgnore}');
+    Logger.log(logLabel, '''Using prettier config from $prettierConfig 
+        and ignore file from $prettierIgnore''');
     var process = await Process.run(
         'npx',
         [
           'prettier',
           '--config',
-          '${prettierConfig}',
+          '$prettierConfig',
           '--ignore-path',
-          '${prettierIgnore}'
-              '--write',
+          '$prettierIgnore',
+          '--write',
           '${config.projectRoot}'
         ],
         workingDirectory: TAIDA_LIBRARY_ROOT);
@@ -184,5 +185,5 @@ class ScssModule extends Module {
   }
 
   @override
-  Phase get executionTime => Phase.PROCESSING;
+  Phase get executionTime => Phase.processing;
 }

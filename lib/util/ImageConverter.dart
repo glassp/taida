@@ -1,16 +1,20 @@
 import 'dart:io';
 
-import 'package:taida/Exception/Failure/FailureException.dart';
-import 'package:taida/_taida.dart';
-import 'package:taida/core/config/ConfigurationLoader.dart';
-import 'package:taida/core/log/Logger.dart';
+import '../Exception/Failure/FailureException.dart';
+import '../_taida.dart';
+import '../core/config/ConfigurationLoader.dart';
+import '../core/log/Logger.dart';
 
+/// Converter for images
 class ImageConverter {
+  /// the file that should be converted
   final File sourceFile;
 
+  /// creates converter for given file to be converted
   ImageConverter(this.sourceFile);
 
-  /// Converts the data of the file to the given `format`, `height` and `width` and returns the binary data.
+  /// Converts the data of the file to the given `format`, `height`
+  /// and `width` and returns the binary data.
   Future<List<int>> convertTo(String format, [int height, int width]) async {
     if (!await _temporaryFile.exists()) {
       await _temporaryFile.create(recursive: true);
@@ -40,15 +44,16 @@ class ImageConverter {
     return File('${config.workingDirectory}/imageConverter/image.temp');
   }
 
+  /// creates nodeJS script to convert the image
   String buildConvertScript(
           String filename, int height, int width, String format) =>
       '''
       const sharp = require("sharp");
-      let inputFile = "${filename}"
+      let inputFile = "$filename"
       let outputFile = "${_temporaryFile.absolute.path}"
-      let format = "${format}"
-      let height = "${height}" == 'null' ? null : Number.parseInt("${height}") || null
-      let width = "${width}" == 'null' ? null : Number.parseInt("${width}") || null
+      let format = "$format"
+      let height = "$height" == 'null' ? null : Number.parseInt("$height") || null
+      let width = "$width" == 'null' ? null : Number.parseInt("$width") || null
       sharp(inputFile)
       .resize(width, height)
       .toFormat(format)

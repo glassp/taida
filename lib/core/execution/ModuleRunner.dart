@@ -1,23 +1,31 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:taida/Error/EnvironmentError.dart';
-import 'package:taida/Exception/Module/ExecutionException.dart';
-import 'package:taida/_taida.dart';
-import 'package:taida/core/config/ConfigurationLoader.dart';
-import 'package:taida/core/execution/Phase.dart';
-import 'package:taida/core/log/LogLabel.dart';
-import 'package:taida/core/log/Logger.dart';
-import 'package:taida/modules/Module.dart';
-import 'package:taida/modules/ModuleLoader.dart';
-import 'package:taida/util/Pubspec.dart';
 import 'package:watcher/watcher.dart';
 
+import '../../Error/EnvironmentError.dart';
+import '../../Exception/Module/ExecutionException.dart';
+import '../../_taida.dart';
+import '../../modules/Module.dart';
+import '../../modules/ModuleLoader.dart';
+import '../../util/Pubspec.dart';
+import '../config/ConfigurationLoader.dart';
+import '../execution/Phase.dart';
+import '../log/LogLabel.dart';
+import '../log/Logger.dart';
+
+/// Runner that executes all modules
 class ModuleRunner {
+  /// List of modules that have to be run
   final List<Module> queue = [];
+
+  /// Watchers that trigger a reexecution
   final Map<Watcher, Module> _watchers = {};
+
+  /// stream subscribers that listen on the watchers
   final List<StreamSubscription> _streamSubscribers = [];
 
+  /// create a queue of modules that have to run
   void createModuleQueue() {
     var registeredModules = ModuleLoader.registeredModules;
 
@@ -30,6 +38,7 @@ class ModuleRunner {
     }
   }
 
+  /// execute all modules with given command
   void run(String command) async {
     await createModuleQueue();
     var config = ConfigurationLoader.load();
@@ -50,7 +59,9 @@ class ModuleRunner {
       for (var watcher in _watchers.keys) {
         var subscriber = watcher.events.listen((event) {
           Logger.verbose('Terminating file watchers and reruning pipeline');
-          _streamSubscribers.forEach((subscription) => subscription.cancel());
+          for (var subscription in _streamSubscribers) {
+            subscription.cancel();
+          }
           _streamSubscribers.clear();
           run(command);
         });
@@ -59,7 +70,9 @@ class ModuleRunner {
       ProcessSignal.sigint.watch().listen((_) {
         Logger.emptyLines();
         Logger.verbose('SIGINT detected. Terminating all watcher');
-        _streamSubscribers.forEach((subscription) => subscription.cancel());
+        for (var subscription in _streamSubscribers) {
+          subscription.cancel();
+        }
         _streamSubscribers.clear();
         Logger.verbose('Terminated all watchers. Now terminating program');
         var config = ConfigurationLoader.load();
@@ -67,8 +80,8 @@ class ModuleRunner {
         Directory(config.workingDirectory).deleteSync(recursive: true);
         Logger.emptyLines();
         var diff = DateTime.now().difference(TAIDA_EXECUTION_START);
-        var timeDiff =
-            '${diff.inHours}h ${diff.inMinutes}m ${diff.inSeconds}s ${diff.inMilliseconds}ms';
+        var timeDiff = '''${diff.inHours}h ${diff.inMinutes}m
+            ${diff.inSeconds}s ${diff.inMilliseconds}ms''';
 
         Logger.log(LogLabel.success, 'Build completed successful in $timeDiff');
         exit(0);
@@ -78,13 +91,14 @@ class ModuleRunner {
 
   /// checks if the dependencies were installed for this library version
   Future<bool> _npmDependenciesAreOutdated() async {
-    var installVersionFile = File(TAIDA_LIBRARY_ROOT + '/installVersion.txt');
+    var installVersionFile = File('$TAIDA_LIBRARY_ROOT/installVersion.txt');
     if (!await installVersionFile.exists()) return true;
     var installVersion = await installVersionFile.readAsString();
-    return installVersion != Pubspec.TAIDA_VERSION;
+    return installVersion != Pubspec.taidaVersion;
   }
 
-  /// checks if the npm dependencies are up-to-date and reinstalls them if necessary
+  /// checks if the npm dependencies are up-to-date and reinstalls
+  /// them if necessary
   void installRequiredNpmDependencies() async {
     var process = await Process.run('node', ['-v']);
     var nodeInstalled = (await process.exitCode) == 0;
@@ -94,7 +108,7 @@ class ModuleRunner {
           'NodeJS/ npm must be in your path to use this tool.');
     }
 
-    var nodeModulesDir = Directory(TAIDA_LIBRARY_ROOT + '/node_modules');
+    var nodeModulesDir = Directory('$TAIDA_LIBRARY_ROOT/node_modules');
     if (await _npmDependenciesAreOutdated()) {
       if (await nodeModulesDir.exists()) {
         await nodeModulesDir.delete(recursive: true);
@@ -103,9 +117,9 @@ class ModuleRunner {
     if (await nodeModulesDir.exists()) return;
 
     Logger.verbose(
-        'Installing node dependencies to ${TAIDA_LIBRARY_ROOT}/node_modules');
+        'Installing node dependencies to $TAIDA_LIBRARY_ROOT/node_modules');
     await Process.run('npm', ['install'], workingDirectory: TAIDA_LIBRARY_ROOT);
-    await (await File(TAIDA_LIBRARY_ROOT + '/installVersion.txt').create())
-        .writeAsString(Pubspec.TAIDA_VERSION);
+    await (await File('$TAIDA_LIBRARY_ROOT/installVersion.txt').create())
+        .writeAsString(Pubspec.taidaVersion);
   }
 }

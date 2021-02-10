@@ -3,34 +3,21 @@ import 'dart:io';
 import 'package:ansicolor/ansicolor.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:taida/core/config/ConfigurationLoader.dart';
-import 'package:taida/core/execution/Phase.dart' as execution;
-import 'package:taida/core/log/LogLabel.dart';
-import 'package:taida/core/log/Logger.dart';
-import 'package:taida/modules/Module.dart';
-import 'package:taida/util/DirectoryCopy.dart';
-import 'package:taida/util/ImageConverter.dart';
-import 'package:taida/util/ModuleContent.dart';
 import 'package:watcher/watcher.dart';
+
+import '../../core/config/ConfigurationLoader.dart';
+import '../../core/execution/Phase.dart' as execution;
+import '../../core/log/LogLabel.dart';
+import '../../core/log/Logger.dart';
+import '../../util/DirectoryCopy.dart';
+import '../../util/ImageConverter.dart';
+import '../../util/ModuleContent.dart';
+import '../Module.dart';
 
 part '_DOM.dart';
 
+/// Module handeling html file creation
 class HtmlModule extends Module {
-  final String templatesDir;
-  final String partialsDir;
-  final String pagesDir;
-
-  HtmlModule(this.templatesDir, this.partialsDir, this.pagesDir);
-  factory HtmlModule.load() {
-    var config = ConfigurationLoader.load();
-    var templatesDir =
-        '${config.projectRoot}/${config.moduleConfiguration.html.templatesDirectory}';
-    return HtmlModule(
-        templatesDir,
-        '${templatesDir}/${config.moduleConfiguration.html.partialsDirectory}',
-        '${templatesDir}/${config.moduleConfiguration.html.pagesDirectory}');
-  }
-
   @override
   bool canHandleCommand(String command) {
     return command == 'build';
@@ -68,7 +55,7 @@ class HtmlModule extends Module {
 
   void _build() async {
     var config = ConfigurationLoader.load();
-    var source = Directory(templatesDir);
+    var source = Directory(config.moduleConfiguration.html.templatesDirectory);
     var destination = Directory('${config.workingDirectory}/html');
     Logger.debug('Copying files from ${source.path}/ to ${destination.path}');
     var copiedFiles = await DirectoryCopy.copy(source, destination);
@@ -78,7 +65,12 @@ class HtmlModule extends Module {
   }
 
   @override
-  List<Watcher> get watchers => [DirectoryWatcher(templatesDir)];
+  List<Watcher> get watchers {
+    var config = ConfigurationLoader.load();
+    return [
+      DirectoryWatcher(config.moduleConfiguration.html.templatesDirectory)
+    ];
+  }
 
   @override
   bool get isConfigured {
@@ -87,5 +79,5 @@ class HtmlModule extends Module {
   }
 
   @override
-  execution.Phase get executionTime => execution.Phase.EMIT;
+  execution.Phase get executionTime => execution.Phase.emit;
 }

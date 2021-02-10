@@ -1,8 +1,9 @@
+// ignore_for_file: avoid_classes_with_only_static_members
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
-import 'package:taida/core/config/ConfigurationLoader.dart';
-import 'package:taida/core/log/LogLabel.dart';
+import '../config/ConfigurationLoader.dart';
+import './LogLabel.dart';
 
 /// Basic logger that prints data to the console or logFile.
 class Logger {
@@ -15,9 +16,10 @@ class Logger {
     var config = ConfigurationLoader.load();
     if (config.logToFile) {
       ansiColorDisabled = true;
-      var logFile = File(config.projectRoot + '/' + config.logFile);
+      var logFile = File('${config.projectRoot}/${config.logFile}');
       if (!logFile.existsSync()) logFile.createSync();
-      logFile.writeAsStringSync('${message}${EOL}', mode: FileMode.append);
+      logFile.writeAsStringSync('$message$endOfLineChar',
+          mode: FileMode.append);
     } else {
       print(message);
     }
@@ -57,5 +59,6 @@ class Logger {
     }
   }
 
-  static String get EOL => Platform.isWindows ? '\r\n' : '\n';
+  /// returns the line ending
+  static String get endOfLineChar => Platform.isWindows ? '\r\n' : '\n';
 }

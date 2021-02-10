@@ -1,4 +1,9 @@
 # CHANGELOG
+## 1.0.7
+ - [bug] fix how image converter script is executed
+ - [style] project now used style according to effective-dart (with the exception of file naming)
+ - [docs] added documentations
+
 ## 1.0.6
  - [cleanup] remove debug code
  - [docs] add notice as to how to use this package.

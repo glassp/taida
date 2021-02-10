@@ -1,8 +1,11 @@
+// ignore_for_file: public_member_api_docs
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:taida/core/config/ConfigurationLoader.dart';
 import 'package:yaml/yaml.dart';
+
+import '../core/config/ConfigurationLoader.dart';
+
 
 class Pubspec {
   static Pubspec _instance;
@@ -42,7 +45,7 @@ class Pubspec {
 
   /// returns the version of this package if embeded into another
   /// WARNING: Cannot be used before Configuration was loaded
-  static String get TAIDA_VERSION {
+  static String get taidaVersion {
     if (!ConfigurationLoader.isLoaded()) {
       throw UnsupportedError(
           'Cannot load Pubspec information before loading configuration');

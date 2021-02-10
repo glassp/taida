@@ -1,16 +1,18 @@
+// ignore_for_file: avoid_classes_with_only_static_members
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:meta/meta.dart';
-import 'package:taida/Exception/Configuration/ConfigurationFileNotFound.dart';
-import 'package:taida/Exception/Configuration/UnknownConfigurationFormat.dart';
-import 'package:taida/core/config/Configuration.dart';
-import 'package:taida/core/log/LogLabel.dart';
-import 'package:taida/core/log/Logger.dart';
-import 'package:taida/core/parse/AbstractConfigParser.dart';
-import 'package:taida/core/parse/JsonConfigParser.dart';
-import 'package:taida/core/parse/YamlConfigParser.dart';
+
+import '../../Exception/Configuration/ConfigurationFileNotFound.dart';
+import '../../Exception/Configuration/UnknownConfigurationFormat.dart';
+import '../log/LogLabel.dart';
+import '../log/Logger.dart';
+import '../parse/AbstractConfigParser.dart';
+import '../parse/JsonConfigParser.dart';
+import '../parse/YamlConfigParser.dart';
+import 'Configuration.dart';
 
 /// Class for loading the Configuration
 /// Should only ever be used in a static context to obtain the configuration.
@@ -21,6 +23,8 @@ abstract class ConfigurationLoader {
   static Map<String, dynamic> _cliOptions;
   static String _projectRoot;
   static final String _workingDirectory = '/taida/workDir';
+
+  /// list of possible configuration file names
   static final List<String> possibleConfigFiles = <String>[
     'taida.yaml',
     'taida.yml',
@@ -28,11 +32,15 @@ abstract class ConfigurationLoader {
   ];
 
   @internal
+
+  /// sets the cli options if they were not set
+  // ignore: avoid_setters_without_getters
   static set cliOptions(Map<String, dynamic> options) {
     _cliOptions ??= options;
   }
 
-  /// returns a [Configuration] either from the cache or a newly created instance,
+  /// returns a [Configuration] either from the cache or
+  /// a newly created instance,
   static Configuration load() => _instance ?? _createConfiguration();
 
   /// checks if a [Configuration] exists in the cache
@@ -42,8 +50,8 @@ abstract class ConfigurationLoader {
   static Configuration _createConfiguration() {
     var configPath = _findConfigurationFile();
     Logger.log(LogLabel.config, 'Reading configuration from $configPath');
-    var path =
-        '${_projectRoot}${_workingDirectory}/taida.config.${configPath.split('.').last}';
+    var ext = configPath.split('.').last;
+    var path = '$_projectRoot$_workingDirectory/taida.config.$ext';
     if (!File(path).existsSync()) File(path).createSync(recursive: true);
 
     // copy contents to temporary config file
@@ -85,7 +93,7 @@ abstract class ConfigurationLoader {
       fileName = fileName.split('/').last;
       if (possibleConfigFiles.contains(fileName)) {
         _projectRoot = cwd.path;
-        return '${_projectRoot}/${fileName}';
+        return '$_projectRoot/$fileName';
       }
     }
 
@@ -112,6 +120,6 @@ Current directory is ${cwd.absolute.path}''');
     }
 
     throw UnknownConfigurationFormatException(
-        'No suitable Parser found for "${path}');
+        'No suitable Parser found for "$path"');
   }
 }

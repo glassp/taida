@@ -1,7 +1,8 @@
+// ignore_for_file: public_member_api_docs
 enum Phase {
-  STATIC_PROCESSING,
-  PREPROCESSING,
-  PROCESSING,
-  EMIT,
-  POSTPROCESSING,
+  staticProcessing,
+  preProcessing,
+  processing,
+  emit,
+  postProcessing,
 }

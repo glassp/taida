@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:taida/core/log/Logger.dart';
+import '../core/log/Logger.dart';
 
+/// copy directiries
 class DirectoryCopy {
   /// Recursive copy of all Dirs and Files in `source` to `destination`.
   /// Also returns a list of all files that have been copied
@@ -18,7 +19,7 @@ class DirectoryCopy {
       if (entity is Directory) {
         Logger.verbose(
             'Copying file ${source.path}/$name to ${destination.path}/$name');
-        var subdir = Directory(destination.path + '/' + name);
+        var subdir = Directory('${destination.path}/$name');
         await subdir.create(recursive: true);
         var results = await copy(entity, subdir);
         files.addAll(results);
@@ -28,7 +29,7 @@ class DirectoryCopy {
         }
         Logger.verbose(
             'Copying file ${source.path}/$name to ${destination.path}/$name');
-        var file = File(destination.path + '/' + name);
+        var file = File('${destination.path}/$name');
         files.add(file);
         await entity.copy(file.path);
       }

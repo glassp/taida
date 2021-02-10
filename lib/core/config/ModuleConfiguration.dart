@@ -1,11 +1,13 @@
+// ignore_for_file: public_member_api_docs
 import 'dart:convert';
 
-import 'package:taida/core/config/modules/copy/CopyTask.dart';
-import 'package:taida/core/config/modules/dart/DartTask.dart';
-import 'package:taida/core/config/modules/html/HtmlConfiguration.dart';
-import 'package:taida/core/config/modules/meta/MetaConfiguration.dart';
-import 'package:taida/core/config/modules/scss/ScssTask.dart';
+import './modules/copy/CopyTask.dart';
+import './modules/dart/DartTask.dart';
+import './modules/html/HtmlConfiguration.dart';
+import './modules/meta/MetaConfiguration.dart';
+import './modules/scss/ScssTask.dart';
 
+/// wrapper for the module configurstions
 class ModuleConfiguration {
   final List<CopyTask> copy;
   final List<ScssTask> scss;

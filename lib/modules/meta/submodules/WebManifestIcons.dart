@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 class WebManifestIcon {
   final String src;
   final int height;
@@ -15,7 +16,7 @@ class WebManifestIcon {
 
   @override
   String toString() => toJson.toString();
-  String get sizes => '${width}x${height}';
+  String get sizes => '${width}x$height';
 
   factory WebManifestIcon.fromJson(Map<String, dynamic> json) {
     return WebManifestIcon(
@@ -30,7 +31,7 @@ class WebManifestIcon {
   Map<String, dynamic> toJson() {
     return {
       'src': src,
-      'sizes': '${sizes}',
+      'sizes': '$sizes',
       'type': type,
     };
   }

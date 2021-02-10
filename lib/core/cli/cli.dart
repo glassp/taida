@@ -1,9 +1,9 @@
 import 'package:args/command_runner.dart';
-import 'package:taida/core/cli/commands/AnalyzeCommand.dart';
-import 'package:taida/core/cli/commands/BuildCommand.dart';
-import 'package:taida/core/cli/commands/FormatCommand.dart';
-import 'package:taida/core/cli/commands/ModuleCommand.dart';
-import 'package:taida/core/cli/commands/TestCommand.dart';
+import './commands/AnalyzeCommand.dart';
+import './commands/BuildCommand.dart';
+import './commands/FormatCommand.dart';
+import './commands/ModuleCommand.dart';
+import './commands/TestCommand.dart';
 
 /// Main command that registers all commands and
 CommandRunner runApp() {

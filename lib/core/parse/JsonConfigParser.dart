@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:taida/core/parse/AbstractConfigParser.dart';
+import './AbstractConfigParser.dart';
 
 /// Parser for config jsons
 class JsonConfigParser extends AbstractConfigParser {
+  /// constructor that creates a parser for given configPath
+  /// and replaces environment variables on-the-fly
   JsonConfigParser(String configPath) : super(configPath);
 
   @override

@@ -2,23 +2,26 @@ import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
 import 'package:html/dom.dart';
-import 'package:taida/core/config/ConfigurationLoader.dart';
-import 'package:taida/core/config/modules/meta/MetaConfiguration.dart';
-import 'package:taida/core/execution/Phase.dart';
-import 'package:taida/core/log/LogLabel.dart';
-import 'package:taida/modules/Module.dart';
-import 'package:taida/modules/meta/submodules/WebManifest.dart';
-import 'package:taida/modules/meta/submodules/WebManifestIcons.dart';
-import 'package:taida/util/ImageConverter.dart';
-import 'package:taida/util/ModuleContent.dart';
-import 'package:taida/util/Pubspec.dart';
 import 'package:watcher/watcher.dart';
+
+import '../../core/config/ConfigurationLoader.dart';
+import '../../core/config/modules/meta/MetaConfiguration.dart';
+import '../../core/execution/Phase.dart';
+import '../../core/log/LogLabel.dart';
+import '../../util/ImageConverter.dart';
+import '../../util/ModuleContent.dart';
+import '../../util/Pubspec.dart';
+import '../Module.dart';
+import 'submodules/WebManifest.dart';
+import 'submodules/WebManifestIcons.dart';
 
 part './submodules/_PwaMetaData.dart';
 part './submodules/_SeoMetaData.dart';
 part './submodules/_SubModuleInterface.dart';
 
+/// Module handeling creation of meta data
 class MetaModule extends Module {
+  /// the submodules of this module
   final submodules = <_SubModuleInterface>[_PwaMetaData(), _SeoMetaData()];
   @override
   bool canHandleCommand(String command) => command == 'build';
@@ -59,5 +62,5 @@ class MetaModule extends Module {
   }
 
   @override
-  Phase get executionTime => Phase.PREPROCESSING;
+  Phase get executionTime => Phase.preProcessing;
 }

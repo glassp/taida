@@ -1,21 +1,17 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
-import 'package:meta/meta.dart';
-import 'package:taida/core/execution/ModuleRunner.dart';
-import 'package:taida/core/log/LogLabel.dart';
-import 'package:taida/modules/Module.dart';
 import 'package:args/command_runner.dart';
-import 'package:taida/core/config/ConfigurationLoader.dart';
-import 'package:taida/core/log/Logger.dart';
-import 'package:watcher/watcher.dart';
+import 'package:meta/meta.dart';
+
+import '../config/ConfigurationLoader.dart';
+import '../execution/ModuleRunner.dart';
+import '../log/LogLabel.dart';
+import '../log/Logger.dart';
 
 /// Abstraction for the Commands that can be invoked for the taida command.
 abstract class BaseCommand extends Command {
-  final Map<Watcher, Module> _watchers = {};
-  final List<StreamSubscription> _streamSubscribers = [];
-
+  /// Constructor that creates this command
   BaseCommand() {
     argParser
       ..addFlag('debug',
@@ -24,11 +20,12 @@ abstract class BaseCommand extends Command {
           abbr: 'v',
           negatable: false,
           defaultsTo: false,
-          help:
-              'Provides additional information to the debug information. Requires debug to be true.');
+          help: '''Provides additional information to the debug information. 
+              Requires debug to be true.''');
   }
 
-  /// Parses the options passed to the CLI  and returns it as a key value map, where the keys SHOULD be snake_case.
+  /// Parses the options passed to the CLI  and returns it as a key value map,
+  ///  where the keys SHOULD be snake_case.
   @protected
   Map<String, dynamic> prepareConfigurationFromCli() {
     var map = <String, dynamic>{'taida': <String, dynamic>{}};

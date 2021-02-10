@@ -1,6 +1,7 @@
 import 'package:args/command_runner.dart';
-import 'package:taida/modules/ModuleLoader.dart';
+import '../../../modules/ModuleLoader.dart';
 
+/// Command that lists all registered modules
 class ModuleCommand extends Command {
   @override
   String get description => 'Lists all Modules that are available';

@@ -5,7 +5,8 @@ abstract class _Configuration {
   static Configuration fromJson(Map<String, dynamic> json) {
     if (!json.containsKey('taida')) {
       throw InvalidConfigurationFormatException(
-          'Configuration is not formated properly. Missing global "taida" key.');
+          '''Configuration is not formated properly. 
+          Missing global "taida" key.''');
     }
 
     json = json['taida'];

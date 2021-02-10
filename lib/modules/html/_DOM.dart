@@ -15,11 +15,11 @@ class _DOM {
     for (var tag in tree.querySelectorAll('taida')) {
       var sourcePath = resolvePath(tag.attributes['src']);
       if (sourcePath.startsWith(config.workingDirectory)) {
-        sourcePath = sourcePath.replaceFirst(
-            '${config.workingDirectory}/html/', module.templatesDir);
+        sourcePath = sourcePath.replaceFirst('${config.workingDirectory}/html/',
+            config.moduleConfiguration.html.templatesDirectory);
       }
       if (!sourcePath.endsWith('.html')) {
-        sourcePath = sourcePath + '.html';
+        sourcePath = '$sourcePath.html';
       }
       var selector = tag.attributes['selector'] ?? 'body';
       var sourceFile = File(sourcePath);
@@ -57,7 +57,7 @@ class _DOM {
           tree.head.append(title);
         }
         var element = Element.tag('meta');
-        element.attributes.putIfAbsent('name', () => '${prefix}${type}');
+        element.attributes.putIfAbsent('name', () => '$prefix$type');
         element.attributes.putIfAbsent('content', () => content);
         tree.head.append(element);
       }
@@ -104,7 +104,7 @@ class _DOM {
       path = breadcrumb.join('.');
       if (height <= 1 || width <= 1) continue;
       for (var ext in extensions) {
-        var file = File('${path}-${height.ceil()}x${width.ceil()}.${ext}');
+        var file = File('$path-${height.ceil()}x${width.ceil()}.$ext');
         if (!await file.exists()) {
           var data =
               await converter.convertTo(ext, height.ceil(), width.ceil());
@@ -122,21 +122,24 @@ class _DOM {
           element.attributes.putIfAbsent('alt', () => tag.attributes['alt']);
         } else {
           element = Element.tag('source');
-          element.attributes.putIfAbsent('type', () => 'image/${ext}');
+          element.attributes.putIfAbsent('type', () => 'image/$ext');
           element.attributes.putIfAbsent('srcset',
               () => file.path.replaceFirst(config.outputDirectory, ''));
         }
         elements.add(element);
       }
       var element = Element.tag('picture');
-      elements.forEach((e) => element.append(e));
+      for (var e in elements) {
+        element.append(e);
+      }
       tag.replaceWith(element);
     }
     await file.writeAsString(tree.outerHtml);
   }
 
   /// replaces all <react> tags with generic divs
-  /// also adds a comment in debug modue to get a better understanding of where component mounts
+  /// also adds a comment in debug modue to get a better
+  ///  understanding of where component mounts
   void _replaceReactTags() async {
     var config = ConfigurationLoader.load();
     var content = await file.readAsString();
@@ -181,8 +184,7 @@ class _DOM {
       await _minify();
     }
     var subDirectory = isPartial() ? '_layout/' : '';
-    var path =
-        '${config.outputDirectory}/${subDirectory}${_relativeFilePath()}';
+    var path = '${config.outputDirectory}/$subDirectory${_relativeFilePath()}';
     if (!isPartial()) {
       path = path.replaceFirst(
           '/${config.moduleConfiguration.html.pagesDirectory}', '');
@@ -239,7 +241,8 @@ class _DOM {
     await file.writeAsString(tree.outerHtml);
   }
 
-  /// resolves the provided `path` as path string referencing directory config key
+  /// resolves the provided `path` as path string referencing directory
+  /// config key
   /// e.g. @KEY => module_configuration.html.key_directory
   String resolvePath(String path) {
     var regex = RegExp(r'@([A-Z]+)/(.*)');
@@ -248,8 +251,11 @@ class _DOM {
     var moduleConfig = configuration.moduleConfiguration.html.toJson();
     var match = regex.firstMatch(path);
     var configKey = '${match.group(1).toLowerCase()}_directory';
+    var templatesDir =
+        configuration.moduleConfiguration.html.templatesDirectory;
+    var rest = match.group(2);
     if (moduleConfig.containsKey(configKey)) {
-      return '${module.templatesDir}/${moduleConfig[configKey]}/${match.group(2)}';
+      return '$templatesDir/${moduleConfig[configKey]}/$rest';
     }
     return path;
   }

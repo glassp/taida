@@ -116,7 +116,7 @@ class _PwaMetaData implements _SubModuleInterface {
         var binaryData =
             await converter.convertTo(format, icon.height, icon.width);
         var outputFile = File(
-            '${config.outputDirectory}/assets/favicon/favicon-${icon.width}x${icon.height}.${format}');
+            '${config.outputDirectory}/assets/favicon/favicon-${icon.width}x${icon.height}.$format');
         if (!await outputFile.exists()) {
           await outputFile.create(recursive: true);
         }
@@ -130,7 +130,7 @@ class _PwaMetaData implements _SubModuleInterface {
                 () => outputFile.path.replaceFirst(config.outputDirectory, ''));
             element.attributes
                 .putIfAbsent('sizes', () => icon.toJson()['sizes']);
-            element.attributes.putIfAbsent('type', () => 'image/${format}');
+            element.attributes.putIfAbsent('type', () => 'image/$format');
           } else if (tag == 'msapplication-TileImage') {
             element = Element.tag('meta');
             element.attributes.putIfAbsent('name', () => tag);
@@ -143,7 +143,7 @@ class _PwaMetaData implements _SubModuleInterface {
               src: outputFile.path,
               height: icon.height,
               width: icon.width,
-              type: 'image/${format}'));
+              type: 'image/$format'));
         }
       }
     }
