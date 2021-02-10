@@ -19,17 +19,14 @@ class ImageConverter {
           flush: true); // Enforce file to be empty
     }
     var process = await Process.run(
-        'node',
-        [
-          '${TAIDA_LIBRARY_ROOT}/lib/util/ImageConverter.script.js',
-          sourceFile.absolute.path,
-          _temporaryFile.absolute.path,
-          format,
-          height.toString(),
-          width.toString(),
-        ],
-        workingDirectory: TAIDA_LIBRARY_ROOT);
-    if (process.exitCode != 0) {
+      'node',
+      [
+        '-e',
+        buildConvertScript(sourceFile.absolute.path, height, width, format)
+      ],
+      workingDirectory: TAIDA_LIBRARY_ROOT,
+    );
+    if (await process.exitCode != 0) {
       Logger.error(process.stderr);
       Logger.emptyLines();
       throw FailureException(
@@ -42,4 +39,24 @@ class ImageConverter {
     var config = ConfigurationLoader.load();
     return File('${config.workingDirectory}/imageConverter/image.temp');
   }
+
+  String buildConvertScript(
+          String filename, int height, int width, String format) =>
+      '''
+      const sharp = require("sharp");
+      let inputFile = "${filename}"
+      let outputFile = "${_temporaryFile.absolute.path}"
+      let format = "${format}"
+      let height = "${height}" == 'null' ? null : Number.parseInt("${height}") || null
+      let width = "${width}" == 'null' ? null : Number.parseInt("${width}") || null
+      sharp(inputFile)
+      .resize(width, height)
+      .toFormat(format)
+      .toFile(outputFile)
+      .then((_) => process.exit(0))
+      .catch((e) => {
+          console.error(e)
+          process.exit(1)
+      })
+    ''';
 }
