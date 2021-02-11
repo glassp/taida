@@ -59,7 +59,6 @@ abstract class ConfigurationLoader {
 
     var parser = _getParserForFileType(path);
     var configMap = parser.parse();
-    print(configMap);
     configMap = configMap['taida'];
 
     // Init cliOptions if not yet done

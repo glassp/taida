@@ -1,4 +1,7 @@
 # CHANGELOG
+## 1.0.8
+ - [bug] fix how npm dependencies are installed
+
 ## 1.0.7
  - [bug] fix how image converter script is executed
  - [style] project now used style according to effective-dart (with the exception of file naming)

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:taida/core/execution/NpmDepenencies.dart';
 import 'package:watcher/watcher.dart';
 
 import '../../Error/EnvironmentError.dart';
@@ -118,6 +119,7 @@ class ModuleRunner {
 
     Logger.verbose(
         'Installing node dependencies to $TAIDA_LIBRARY_ROOT/node_modules');
+    await NpmDependencies().createPackageJson();
     await Process.run('npm', ['install'], workingDirectory: TAIDA_LIBRARY_ROOT);
     await (await File('$TAIDA_LIBRARY_ROOT/installVersion.txt').create())
         .writeAsString(Pubspec.taidaVersion);
