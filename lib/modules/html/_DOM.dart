@@ -12,6 +12,7 @@ class _DOM {
   void _replaceTaidaTags() async {
     var config = ConfigurationLoader.load();
     var tree = parse(await file.readAsString());
+    if (tree.querySelectorAll('taida').isEmpty) return;
     for (var tag in tree.querySelectorAll('taida')) {
       var sourcePath = resolvePath(tag.attributes['src']);
       if (sourcePath.startsWith(config.workingDirectory)) {
@@ -30,18 +31,17 @@ class _DOM {
         tag.parent.insertBefore(comment, tag);
       }
       if (element.children.length > 1) {
-        tag.replaceWith(Element.tag('div'));
+        var wrapper = Element.tag('div');
         for (var node in element.children) {
-          tag.append(node);
+          wrapper.append(node);
         }
+        tag.replaceWith(wrapper);
       } else {
         tag.replaceWith(element.firstChild);
       }
     }
     await file.writeAsString(tree.outerHtml);
-    if (tree.querySelectorAll('taida').isNotEmpty) {
-      _replaceTaidaTags();
-    }
+    await _replaceTaidaTags();
   }
 
   /// replace <seo> tags with corresponding meta tags

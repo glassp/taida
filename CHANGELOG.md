@@ -1,4 +1,8 @@
 # CHANGELOG
+## 1.0.9
+ - [bug] fix multi level taida tag replacement
+ - [bug] fix multi tag taida replacement
+
 ## 1.0.8
  - [bug] fix how npm dependencies are installed
 
