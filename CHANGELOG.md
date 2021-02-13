@@ -1,6 +1,10 @@
 # CHANGELOG
+## 1.0.11
+ - [bug] fix bug with manifest creation containing empty description
+
 ## 1.0.10
  - [bug] fix bug with async execution
+
 ## 1.0.9
  - [bug] fix multi level taida tag replacement
  - [bug] fix multi tag taida replacement
@@ -33,5 +37,4 @@
  - [bug] fixing typos
 
 ## 1.0.0
-
 - Initial version, created by Stagehand

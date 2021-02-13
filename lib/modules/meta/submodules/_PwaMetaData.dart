@@ -44,6 +44,7 @@ class _PwaMetaData implements _SubModuleInterface {
     var config = ConfigurationLoader.load();
     var manifest = WebManifest(
         name: Pubspec.load().name,
+        description: Pubspec.load().description,
         shortName: moduleConfiguration.shortName,
         startUrl: moduleConfiguration.startUrl,
         display: moduleConfiguration.display,
@@ -52,7 +53,7 @@ class _PwaMetaData implements _SubModuleInterface {
             .map<WebManifestIcon>((icon) => icon.copyWith(
                 src: icon.src.replaceFirst(config.outputDirectory, '')))
             .toList(),
-        relatedApplications: moduleConfiguration.relatedApplications);
+        relatedApplications: moduleConfiguration.relatedApplications ?? []);
     for (final file in [
       File('${config.outputDirectory}/manifest.json'),
       File('${config.outputDirectory}/manifest.webmanifest')
