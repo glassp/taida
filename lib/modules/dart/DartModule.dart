@@ -48,10 +48,9 @@ class DartModule extends Module {
         '${config.projectRoot}/${task.entry}'
       ]);
       var element = Element.tag('script');
-      element.attributes.addAll({
-        'src': '/$outputFile$cacheBusterSuffix.dart.js',
-        'type': 'application/javascript'
-      });
+      element.attributes
+          .putIfAbsent('src', () => '/$outputFile$cacheBusterSuffix.dart.js');
+      element.attributes.putIfAbsent('type', () => 'application/javascript');
       ModuleContent.registerContent(element, includeInHtmlHead: false);
     }
   }
@@ -69,7 +68,7 @@ ${config.moduleConfiguration.dart} in $command mode''');
 
     switch (command) {
       case 'build':
-        _build(config);
+        await _build(config);
         return;
       case 'analyze':
         args = [

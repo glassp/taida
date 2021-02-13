@@ -206,7 +206,8 @@ class _DOM {
       tree.head.append(fragment);
     }
     for (var node in ModuleContent.bodyContents) {
-      tree.body.append(node);
+      var fragment = DocumentFragment.html(node.outerHtml);
+      tree.body.append(fragment);
     }
     await file.writeAsString(tree.outerHtml);
   }

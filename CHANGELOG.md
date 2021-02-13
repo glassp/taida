@@ -1,4 +1,6 @@
 # CHANGELOG
+## 1.0.10
+ - [bug] fix bug with async execution
 ## 1.0.9
  - [bug] fix multi level taida tag replacement
  - [bug] fix multi tag taida replacement
