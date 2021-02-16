@@ -1,4 +1,7 @@
 # CHANGELOG
+## 1.0.12
+ - [bug] ensure that config files are pressent by dynamically generating them
+ 
 ## 1.0.11
  - [bug] fix bug with manifest creation containing empty description
 
