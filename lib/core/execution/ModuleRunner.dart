@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:taida/core/execution/NpmDepenencies.dart';
+import 'package:taida/core/files/config/PrettierConfiguration.dart';
+import 'package:taida/core/files/config/StylelintConfiguration.dart';
 import 'package:watcher/watcher.dart';
 
 import '../../Error/EnvironmentError.dart';
@@ -12,6 +13,7 @@ import '../../modules/ModuleLoader.dart';
 import '../../util/Pubspec.dart';
 import '../config/ConfigurationLoader.dart';
 import '../execution/Phase.dart';
+import '../files/NpmDepenencies.dart';
 import '../log/LogLabel.dart';
 import '../log/Logger.dart';
 
@@ -100,6 +102,7 @@ class ModuleRunner {
 
   /// checks if the npm dependencies are up-to-date and reinstalls
   /// them if necessary
+  /// also creates config files fot the packages if necessary
   void installRequiredNpmDependencies() async {
     var process = await Process.run('node', ['-v']);
     var nodeInstalled = (await process.exitCode) == 0;
@@ -110,6 +113,12 @@ class ModuleRunner {
     }
 
     var nodeModulesDir = Directory('$TAIDA_LIBRARY_ROOT/node_modules');
+
+    // create config for packages
+    await PrettierConfiguration().createPrettierrcYaml();
+    await PrettierConfiguration().createPrettierIgnore();
+    await StylelintConfiguration().createStylelintrcYaml();
+
     if (await _npmDependenciesAreOutdated()) {
       if (await nodeModulesDir.exists()) {
         await nodeModulesDir.delete(recursive: true);
