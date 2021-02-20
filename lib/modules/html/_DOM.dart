@@ -173,6 +173,7 @@ class _DOM {
   void buildPage() async {
     var config = ConfigurationLoader.load();
     if (!config.debug && isPartial()) return;
+    if (config.a11y) _addA11yCheck();
     await _replaceSeoTags();
     await _replaceTaidaTags();
     await _replaceReactTags();
@@ -210,6 +211,12 @@ class _DOM {
       tree.body.append(fragment);
     }
     await file.writeAsString(tree.outerHtml);
+  }
+
+  void _addA11yCheck() {
+    final element = Element.html(
+        '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/checka11y-css/checka11y.css" />');
+    ModuleContent.registerContent(element);
   }
 
   /// checks if the given File contains a partial

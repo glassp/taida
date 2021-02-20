@@ -1,4 +1,9 @@
 # CHANGELOG
+## 1.1.0
+ - [docs] added documentations for internals
+ - [docs] added install and usage information
+ - [feature] added a11y flag to include checka11y.css into HTML builds
+
 ## 1.0.12
  - [bug] ensure that config files are pressent by dynamically generating them
  

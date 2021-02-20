@@ -18,6 +18,7 @@ abstract class _Configuration {
       debug: json['debug'] as bool ?? false,
       verbose: json['verbose'] as bool ?? false,
       watch: json['watch'] as bool ?? false,
+      a11y: json['a11y'] as bool ?? false,
       buildHash: json['build_hash'] as String,
       moduleConfiguration: json['module_config'] == null
           ? null
@@ -35,6 +36,7 @@ abstract class _Configuration {
       'debug': config.debug,
       'verbose': config.verbose,
       'watch': config.watch,
+      'a11y': config.a11y,
       'build_hash': '"${config.buildHash}"',
       'module_config_': config.moduleConfiguration.toJson(),
       '\$workingDirectory': '"${config.workingDirectory}"',

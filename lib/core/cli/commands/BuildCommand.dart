@@ -11,9 +11,15 @@ class BuildCommand extends BaseCommand {
   /// Constructor that creates this command
   BuildCommand() : super() {
     argParser
+      ..addFlag('a11y',
+          abbr: 'a',
+          defaultsTo: false,
+          help: 'Automatically adds checka11y.css to the html outout',
+          negatable: false)
       ..addFlag('watch',
           abbr: 'w',
           defaultsTo: false,
-          help: 'Enables the usage of a FileWatcher');
+          help: 'Enables the usage of a FileWatcher',
+          negatable: false);
   }
 }
