@@ -1,9 +1,7 @@
 taida:
-  output_dir: public #default to build
-  #log_file: log/output.log # default '' => no file logging
-  # must not contain a leading / and must be relative to this file
-  enable_cache_buster: true #default false
-  log_file: null #log/taida.log # null => disabled
+  output_dir: public
+  enable_cache_buster: true
+  log_file: null 
   module_config:
     copy:
       - from: 
@@ -11,11 +9,11 @@ taida:
           - res/files
         to: assets/res
     scss:
-      - entry: assets/scss/app.scss #relative path to file from this file
-        output: assets/app.css #relative path to file from this file
+      - entry: assets/scss/app.scss
+        output: assets/app.css 
       - entry: assets/scss/media.scss
         output: assets/media.css
-        media: "(preferes-color-scheme: dark)" # must be a valid media query and should always be quoted
+        media: "(preferes-color-scheme: dark)"
     dart:
       - entry: assets/dart/app.dart
         output: assets/app.dart.js
@@ -28,8 +26,8 @@ taida:
       short_name: taida
       start_url: '.'
       display: standalone
-      favicon_image: res/favicon.svg # will be compiled
-      preview_image: res/preview.jpg # will be compiled
+      favicon_image: res/favicon.svg
+      preview_image: res/preview.jpg
       keywords:
         - a
         - b

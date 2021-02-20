@@ -49,4 +49,9 @@ class ModuleLoader {
     Logger.verbose('Unregistering Module ${module.name}...');
     _registeredModules.remove(module.name);
   }
+
+  /// Take a peek at the currently registered modules.
+  /// The Map of peeked modules is a unmodifieable copy of the internally
+  ///  used Map!
+  static Map<String, String> peek() => Map.unmodifiable(_registeredModules);
 }

@@ -1,5 +1,7 @@
 import 'package:args/command_runner.dart';
+
 import '../../../modules/ModuleLoader.dart';
+import '../../log/Logger.dart';
 
 /// Command that lists all registered modules
 class ModuleCommand extends Command {
@@ -11,6 +13,7 @@ class ModuleCommand extends Command {
 
   @override
   void run() {
+    Logger.activated = false;
     print('Module\tDescription');
     print('------------------------------------------------------------');
     for (var module in ModuleLoader.registeredModules.values) {

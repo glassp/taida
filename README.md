@@ -4,17 +4,46 @@ Taida
 
 Taida is a build tool used to create websites.
 
-You may use the following commands:
- - build
- - analyze
- - format
+Current features:
 
- Important
- -----------
+- SCSS-compiles
+- HTML-nesting (importing another HTML file in the current file)
+- Dart (compiled to js)
+- coping static assets
+- auto generating meta data
+- auto compressing (resizing) images
+- formating all files
+- analyzing all files
+- running tests
 
- To use taida use the following command:
- ```bash
-dart pub taida:taida
- ```
+## How to install
+Add this package to your `pubspec.yaml` dependencies:
+```yaml
+    dependencies:
+        taida: <latest_version>
+```
+then run `dart pub get`
 
-Installing taida useing `dart pub global activate taida` does not work as taida has some runtime dependencies that cannot be precompiled by pub.
+Or install it globally via `dart pub global activate taida`
+
+## How to use
+This package is best used via `dart pub run taida:taida` if installed as dependency.
+In this case it is recommended to create an alias for the command (e.g. `alias taida='dart pub run taida:taida`)
+
+If the package is installed globally you can just use it as `taida`.
+
+Whenever you read `taida` as a command it referes to the appropiate aforementioned command depending on how you installed the package.
+
+You can run the following tasks:
+```bash
+taida build # starts the build process for the project
+taida modules # lists all registered modules
+taida format # formats all project files
+taida analyze # runs an analyzer over all files
+taida test # executes all test
+taida --help # prints the help screen
+taida -h # prints the help screen
+```
+
+## Configuration
+Please refer to the files in [examples/configuration](examples/configuration/README.md)

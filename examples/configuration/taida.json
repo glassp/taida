@@ -1,0 +1,68 @@
+{
+    "taida": {
+      "output_dir": "public",
+      "enable_cache_buster": true,
+      "log_file": null,
+      "module_config": {
+        "copy": [
+          {
+            "from": [
+              "copy",
+              "res/files"
+            ],
+            "to": "assets/res"
+          }
+        ],
+        "scss": [
+          {
+            "entry": "assets/scss/app.scss",
+            "output": "assets/app.css"
+          },
+          {
+            "entry": "assets/scss/media.scss",
+            "output": "assets/media.css",
+            "media": "(preferes-color-scheme: dark)"
+          }
+        ],
+        "dart": [
+          {
+            "entry": "assets/dart/app.dart",
+            "output": "assets/app.dart.js"
+          }
+        ],
+        "html": {
+          "templates_directory": "templates",
+          "pages_directory": "pages",
+          "partials_directory": "_partials"
+        },
+        "meta": {
+          "tilecolor": "black",
+          "short_name": "taida",
+          "start_url": ".",
+          "display": "standalone",
+          "favicon_image": "res/favicon.svg",
+          "preview_image": "res/preview.jpg",
+          "keywords": [
+            "a",
+            "b",
+            "c"
+          ],
+          "twitter": {
+            "type": "summary",
+            "creator": "@glassp",
+            "site": "@github"
+          },
+          "open_graph": {
+            "type": "website",
+            "site": "Github.com"
+          },
+          "related_applications": [
+            {
+              "platform": "play",
+              "url": "https://play.google.com/app/gdt8trg78w2"
+            }
+          ]
+        }
+      }
+    }
+  }

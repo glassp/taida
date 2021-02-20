@@ -7,8 +7,12 @@ import './LogLabel.dart';
 
 /// Basic logger that prints data to the console or logFile.
 class Logger {
+  /// flag to disable the logger completely
+  static bool activated = true;
+
   /// writes the `message` to the given output location.
   static void _write(String message) {
+    if (!activated) return;
     if (!ConfigurationLoader.isLoaded()) {
       print(message);
       return;
