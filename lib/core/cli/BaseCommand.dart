@@ -15,7 +15,10 @@ abstract class BaseCommand extends Command {
   BaseCommand() {
     argParser
       ..addFlag('debug',
-          abbr: 'd', defaultsTo: false, help: 'Enables debug information.')
+          abbr: 'd',
+          defaultsTo: false,
+          help: 'Enables debug information.',
+          negatable: false)
       ..addFlag('verbose',
           abbr: 'v',
           negatable: false,

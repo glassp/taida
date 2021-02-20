@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:args/command_runner.dart';
 import 'package:taida/Exception/Failure/FailureException.dart';
 import 'package:taida/_taida.dart';
 import 'package:taida/core/log/LogLabel.dart';
@@ -9,14 +10,9 @@ import 'package:taida/taida.dart';
 void main(List<String> arguments) async {
   var start = TAIDA_EXECUTION_START;
   try {
-    if (arguments.isNotEmpty) {
-      await runApp().run(arguments);
-    } else {
-      await runApp().run(['help']);
-      return;
-    }
-    var config = ConfigurationLoader.load();
-    if (!config.watch) {
+    await runApp(arguments);
+
+    if (!ConfigurationLoader.load().watch) {
       Logger.emptyLines();
       var diff = DateTime.now().difference(start);
       var timeDiff =

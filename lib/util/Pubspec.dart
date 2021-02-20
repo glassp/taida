@@ -6,7 +6,6 @@ import 'package:yaml/yaml.dart';
 
 import '../core/config/ConfigurationLoader.dart';
 
-
 class Pubspec {
   static Pubspec _instance;
   final String name;
@@ -53,6 +52,6 @@ class Pubspec {
     var config = ConfigurationLoader.load();
     var json = jsonDecode(jsonEncode(loadYaml(
         File('${config.projectRoot}/pubspec.lock').readAsStringSync())));
-    return json['packages']['taida']['version'];
+    return json['packages']['taida']['version'] ?? "UNKNOWN";
   }
 }
