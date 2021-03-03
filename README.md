@@ -1,9 +1,16 @@
 Taida
 ======
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart)
+[![status: discontinued](https://img.shields.io/badge/Status-discontinued-red)
 
 Taida is a build tool used to create websites.
 
+## Discontinued
+This project is discontinued in favir of using flutter 2.0 with web support.
+Flutter is a full-fledged ui kit on a scale which is out of scope for this package.
+Originally this was planned as a proof of concept  which then got used by some small side projects.
+
+## Features
 Current features:
 
 - SCSS-compiles
@@ -20,7 +27,7 @@ Current features:
 Add this package to your `pubspec.yaml` dependencies:
 ```yaml
     dependencies:
-        taida: <latest_version>
+        taida: 1.1.0 # last release
 ```
 then run `dart pub get`
 
